@@ -2,7 +2,7 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <title>Služební kniha CRC - Elizabeth Brown</title>
+    <title>Služební kniha CRC - Personál</title>
     <style>
         :root {
             --bg: #1e1c1a; 
@@ -11,10 +11,68 @@
             --text: #d2c1ae; 
             --success: #4a5d43; 
         }
-        body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); display: flex; justify-content: center; padding: 20px; }
+        body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); display: flex; justify-content: center; padding: 20px; margin: 0; }
         .container { background: var(--card); border: 1px solid var(--accent); border-radius: 4px; width: 600px; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); position: relative; }
         
         .container::before { content: ""; position: absolute; top: 10px; left: 10px; right: 10px; bottom: 10px; border: 1px solid rgba(176, 144, 96, 0.1); pointer-events: none; }
+
+        /* Ikona otazníku */
+        .help-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 30px;
+            height: 30px;
+            background: var(--accent);
+            color: #1a1816;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1.2rem;
+            z-index: 10;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        /* Modální okno (Nápověda) */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background-color: var(--card);
+            margin: 5% auto;
+            padding: 30px;
+            border: 1px solid var(--accent);
+            width: 80%;
+            max-width: 500px;
+            color: var(--text);
+            box-shadow: 0 0 50px rgba(0,0,0,1);
+            position: relative;
+        }
+        .close-modal {
+            color: var(--accent);
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .help-step {
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #4d453d;
+        }
+        .help-step h4 { color: var(--accent); margin: 0 0 5px 0; text-transform: uppercase; font-size: 0.9rem; }
+        .help-step p { font-size: 0.85rem; margin: 0; line-height: 1.4; color: #b0a090; }
 
         h1, h2 { text-align: center; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; margin-top: 0; font-weight: normal; }
         h1 { border-bottom: 2px double var(--accent); padding-bottom: 10px; margin-bottom: 5px; }
@@ -36,13 +94,13 @@
         #active-timetable { font-family: 'Courier New', monospace; background: #141210; padding: 15px; border: 1px inset #333; color: #a0a0a0; line-height: 1.6; font-size: 0.9em; }
         label { font-size: 0.75em; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; display: block; margin-top: 15px; }
         .timetable-row { display: flex; justify-content: space-between; border-bottom: 1px solid #222; padding: 5px 0; }
-        
-        hr { border: 0; border-top: 1px solid #4d453d; margin: 25px 0; }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <div class="help-icon" onclick="openHelp()">?</div>
+    
     <h1>CONTINENTAL RAIL COMPANY</h1>
     <p class="subtitle">Služební kniha strojvůdce - Protokol 1899</p>
 
@@ -51,6 +109,9 @@
         <label>Jméno odpovědného strojvůdce:</label>
         <select id="user-select">
             <option value="Elizabeth Brown">Elizabeth Brown</option>
+            <option value="Joshue Thorne">Joshue Thorne</option>
+            <option value="Henry Brown">Henry Brown</option>
+            <option value="Nicholas Carter">Nicholas Carter</option>
         </select>
         <button class="btn-start" onclick="goToStep2()">OTEVŘÍT SLUŽEBNÍ KNIHU</button>
     </div>
@@ -97,8 +158,39 @@
     </div>
 </div>
 
+<div id="helpModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeHelp()">&times;</span>
+        <h2 style="margin-bottom: 25px;">NÁVOD K OBSLUZE KNIHY</h2>
+        
+        <div class="help-step">
+            <h4>STEP-1: Identifikace</h4>
+            <p>Vyberte své jméno ze seznamu personálu. Tímto jménem budou podepisovány všechny telegramy a výkazy v této směně.</p>
+        </div>
+
+        <div class="help-step">
+            <h4>STEP-2: Volba směny</h4>
+            <p>Zvolte si časový blok, který máte od vedení přidělený. Systém vám automaticky vygeneruje náhodné linie k odbavení.</p>
+        </div>
+
+        <div class="help-step">
+            <h4>STEP-3: Pošta a Telegramy</h4>
+            <p>U každé jízdy musíte vybrat, kde nabíráte a kde vykládáte poštu. Po potvrzení se automaticky rozešle telegram do stanic a tabule do Blackwateru.</p>
+        </div>
+
+        <div class="help-step">
+            <h4>STEP-4: Protokol jízdy</h4>
+            <p>Zde vidíte časy příjezdů. Na konci jízdy zapište počet prodaných jízdenek. Tento údaj je povinný pro archivaci zisku společnosti.</p>
+        </div>
+
+        <div class="help-step">
+            <h4>STEP-5: Uzavření knihy</h4>
+            <p>Po odjetí všech linií systém odešle souhrnný výkaz vedení společnosti a zapíše celkovou dobu vaší služby.</p>
+        </div>
+    </div>
+</div>
+
 <script>
-    // Webhooky pro Elizabeth
     const WEBHOOK_LOG = "https://discord.com/api/webhooks/1462379181290553378/7szxSP1bgAiR1diwDixyPPrXxklYWVGdLn3xZy8czqxGbqda9wtryXNV_zqJXL3PHGKO";
     const WEBHOOK_RAD = "https://discord.com/api/webhooks/1462391755864277033/mQ1n6EsyC-yEuEc7hZTYsm8Jt9VjnUGr-jPVM2qjvVSSkisoS2Cpl1DSi1Oe7lUnBd6J";
     const WEBHOOK_BW = "https://discord.com/api/webhooks/1463245037834862616/M_myizEOqBJjE84_5MKqNQdRlY4S1P6EHBA3JnYxOw2mdYYn0kt609sc8MIz1v3e4PkV";
@@ -111,6 +203,14 @@
     ];
 
     let shiftData = { worker: "", type: "", routes: [], currentIndex: 0, totalTickets: 0, startTimeReal: null, telegrams: { in: "", out: "" } };
+
+    // Funkce pro modální okno
+    function openHelp() { document.getElementById('helpModal').style.display = "block"; }
+    function closeHelp() { document.getElementById('helpModal').style.display = "none"; }
+    window.onclick = function(event) {
+        let modal = document.getElementById('helpModal');
+        if (event.target == modal) modal.style.display = "none";
+    }
 
     function showStep(s) {
         ['1', '2', '3', '4', '5', 'telegrams'].forEach(id => document.getElementById('step-' + id).classList.add('hidden'));
