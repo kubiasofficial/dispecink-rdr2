@@ -2,285 +2,266 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <title>Služební kniha CRC - Interaktivní Protokol</title>
+    <title>DISPEČINK CRC v1.40</title>
     <style>
-        :root { --bg: #1e1c1a; --card: #2d2a27; --accent: #b09060; --text: #d2c1ae; --success: #4a5d43; --danger: #8b2e2e; --modal-bg: rgba(0,0,0,0.95); }
+        :root { --bg: #121110; --card: #1c1a18; --accent: #b09060; --text: #d2c1ae; --success: #4a5d43; --danger: #8b2e2e; --modal-bg: rgba(0,0,0,0.9); }
         body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); margin: 0; display: flex; justify-content: center; padding: 20px; }
-        .container { background: var(--card); border: 1px solid var(--accent); width: 700px; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); position: relative; }
+        .container { background: var(--card); border: 1px solid var(--accent); width: 750px; padding: 30px; box-shadow: 0 10px 50px #000; border-radius: 8px; }
         
-        /* Horní lišta s informacemi */
-        .status-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; background: rgba(0,0,0,0.5); padding: 15px; border: 1px solid #4d453d; margin-bottom: 25px; border-radius: 4px; text-align: center; }
-        .stat-item { font-size: 0.85rem; display: flex; flex-direction: column; gap: 5px; border-right: 1px solid #444; }
-        .stat-item:last-child { border-right: none; }
-        .stat-val { font-weight: bold; font-size: 1.1rem; color: var(--accent); }
-        .delay-bad { color: var(--danger); }
-        .delay-good { color: var(--success); }
-        
-        /* Modální okna */
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: var(--modal-bg); backdrop-filter: blur(5px); }
-        .modal-content { background: var(--card); margin: 10% auto; padding: 30px; border: 1px solid var(--accent); width: 400px; text-align: center; box-shadow: 0 0 50px #000; }
-        
-        h1, h2 { text-align: center; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; }
-        .hidden { display: none; }
-        button { width: 100%; padding: 12px; margin: 10px 0; cursor: pointer; font-family: 'Georgia', serif; text-transform: uppercase; font-weight: bold; border-radius: 2px; border: 1px solid var(--accent); transition: 0.2s; }
+        .status-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; background: rgba(0,0,0,0.4); padding: 15px; border: 1px solid #444; margin-bottom: 20px; }
+        .stat-val { display: block; font-weight: bold; color: var(--accent); font-size: 1.2rem; }
+
+        .cargo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; background: rgba(0,0,0,0.2); padding: 15px; border: 1px solid #333; }
+        .cargo-section h3 { font-size: 0.9rem; color: var(--accent); border-bottom: 1px solid #444; padding-bottom: 5px; }
+        .cargo-item { display: flex; justify-content: space-between; padding: 5px 0; font-size: 0.85rem; }
+
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: var(--modal-bg); backdrop-filter: blur(8px); }
+        .modal-content { background: var(--card); margin: 15% auto; padding: 30px; border: 1px solid var(--accent); width: 450px; text-align: center; }
+
+        button { width: 100%; padding: 12px; margin: 10px 0; cursor: pointer; font-family: 'Georgia', serif; font-weight: bold; text-transform: uppercase; border: 1px solid var(--accent); transition: 0.3s; }
         .btn-gold { background: var(--accent); color: #1a1816; }
-        .btn-green { background: var(--success); color: white; border: none; }
         .btn-outline { background: transparent; color: var(--accent); }
-        button:hover { filter: brightness(1.2); }
+        .btn-green { background: var(--success); color: white; border: none; }
         
-        input { width: 100%; padding: 10px; background: #1a1816; color: var(--text); border: 1px solid #4d453d; text-align: center; margin: 10px 0; box-sizing: border-box; font-size: 1.2rem; }
-        #active-timetable { font-family: 'Courier New', monospace; background: #141210; padding: 15px; border: 1px inset #333; line-height: 1.8; }
-        .station-row { display: flex; justify-content: space-between; padding: 8px 15px; border-bottom: 1px solid #222; cursor: pointer; }
+        input, select { width: 100%; padding: 10px; background: #000; color: var(--text); border: 1px solid #444; margin: 5px 0; box-sizing: border-box; }
+        .hidden { display: none; }
+        
+        #active-timetable { background: #0a0a0a; padding: 10px; border: 1px solid #333; }
+        .station-row { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #222; cursor: pointer; }
         .station-row:hover { background: rgba(176, 144, 96, 0.1); }
-        .station-row.completed { color: #666; text-decoration: line-through; cursor: default; }
         .station-row.next { border-left: 4px solid var(--accent); background: rgba(176, 144, 96, 0.05); }
+        .station-row.completed { color: #555; text-decoration: line-through; }
+        .cargo-badge { font-size: 0.7rem; background: #5d4e37; color: #fff; padding: 2px 6px; border-radius: 3px; margin-left: 10px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>CONTINENTAL RAIL COMPANY</h1>
-    
+    <h1 style="text-align:center; letter-spacing:3px;">DISPEČINK CRC v1.40</h1>
+
     <div id="status-display" class="status-bar hidden">
-        <div class="stat-item">
-            <span>VÝDĚLEK</span>
-            <span id="stat-money" class="stat-val">0 USD</span>
-        </div>
-        <div class="stat-item">
-            <span>JÍZDENKY</span>
-            <span id="stat-tickets" class="stat-val">0 Ks</span>
-        </div>
-        <div class="stat-item">
-            <span>KOLO / HISTORIE</span>
-            <span id="stat-round" class="stat-val">1 / 0</span>
-        </div>
-        <div class="stat-item">
-            <span>ZPOŽDĚNÍ</span>
-            <span id="stat-delay" class="stat-val">Včas</span>
-        </div>
+        <div style="text-align:center">VÝDĚLEK<span id="stat-money" class="stat-val">0 USD</span></div>
+        <div style="text-align:center">JÍZDENKY<span id="stat-tickets" class="stat-val">0 Ks</span></div>
+        <div style="text-align:center">KOLO<span id="stat-round" class="stat-val">1 / 1</span></div>
+        <div style="text-align:center">ZPOŽDĚNÍ<span id="stat-delay" class="stat-val">Včas</span></div>
     </div>
 
-    <div id="step-1" class="step">
-        <h2>[ IDENTIFIKACE ]</h2>
-        <label>Jméno strojvůdce:</label>
-        <select id="user-select" style="width:100%; padding:12px; background:#1a1816; color:var(--text); border:1px solid #4d453d;">
+    <div id="step-setup" class="step">
+        <label>Odpovědný strojvůdce:</label>
+        <select id="user-select">
             <option value="Elizabeth Brown">Elizabeth Brown</option>
             <option value="Joshue Thorne">Joshue Thorne</option>
             <option value="Henry Brown">Henry Brown</option>
             <option value="Nicholas Carter">Nicholas Carter</option>
         </select>
-        <label style="display:block; margin-top:15px;">Počet kol před začátkem směny (Historie):</label>
-        <input type="number" id="initial-rounds" value="0">
-        <button class="btn-gold" onclick="goToStep2()">OTEVŘÍT SLUŽEBNÍ KNIHU</button>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:15px;">
+            <div>
+                <label>Počet kol ve směně:</label>
+                <input type="number" id="shift-rounds" value="3" min="1">
+            </div>
+            <div>
+                <label>Pauza (minuty):</label>
+                <input type="number" id="pause-duration" value="5">
+            </div>
+        </div>
+        <button class="btn-gold" onclick="initShift()">NASTOUPIT DO SLUŽBY</button>
     </div>
 
-    <div id="step-2" class="step hidden">
-        <h2>[ VOLBA SLUŽBY ]</h2>
-        <button class="btn-outline" onclick="generateShift('ranni')">§ RANNÍ (05:00 - 15:00)</button>
-        <button class="btn-outline" onclick="generateShift('odpoledni')">§ ODPOLEDNÍ (15:00 - 22:00)</button>
-        <button class="btn-outline" onclick="generateShift('nocni')">§ NOČNÍ (22:00 - 05:00)</button>
+    <div id="step-prep" class="step hidden">
+        <h2 id="prep-title" style="text-align:center; color:var(--accent);">PŘÍPRAVA KOLA 1</h2>
+        <label>Výběr trasy:</label>
+        <select id="route-select" onchange="updateCargoList()">
+            <option value="0">LINIE I. - HLAVNÍ OKRUH</option>
+            <option value="1">LINIE II. - ZÁPADNÍ SPOJKA</option>
+        </select>
+
+        <div class="cargo-grid">
+            <div class="cargo-section">
+                <h3>📦 NAKLÁDKA (Telegramy/Balíky)</h3>
+                <div id="load-list"></div>
+            </div>
+            <div class="cargo-section">
+                <h3>📥 VYKLÁDKA</h3>
+                <div id="unload-list"></div>
+            </div>
+        </div>
+        <button class="btn-gold" onclick="generateLeg()">GENEROVAT JÍZDNÍ ŘÁD</button>
     </div>
 
-    <div id="step-4" class="step hidden">
-        <h2 id="active-title">PROTOKOL JÍZDY</h2>
+    <div id="step-drive" class="step hidden">
+        <h2 id="drive-title" style="text-align:center;">PROTOKOL JÍZDY</h2>
         <div id="active-timetable"></div>
-        <p style="text-align:center; font-size:0.8rem; font-style:italic; margin-top:15px; color: var(--accent);">
-            * Klikněte na stanici ihned po zastavení u výpravčího. *
-        </p>
-    </div>
-
-    <div id="step-5" class="step hidden">
-        <h2>[ KONEC SLUŽEBNÍHO ZÁZNAMU ]</h2>
-        <div id="final-summary" style="background:rgba(0,0,0,0.2); padding:20px; line-height:2; border: 1px solid #444;"></div>
-        <button class="btn-gold" onclick="location.reload()">UZAVŘÍT KNIHU</button>
-    </div>
-</div>
-
-<div id="dispatch-modal" class="modal">
-    <div class="modal-content">
-        <h3 id="dispatch-text"></h3>
-        <button class="btn-green" onclick="handleArrival(true)">ANO</button>
-        <button class="btn-outline" onclick="handleArrival(false)">NE (POČKAT 60S)</button>
     </div>
 </div>
 
 <div id="ticket-modal" class="modal">
     <div class="modal-content">
-        <h3>ZÁZNAM PRODANÝCH JÍZDENEK</h3>
-        <p id="ticket-station-name" style="color:var(--accent)"></p>
-        <input type="number" id="current-tickets" value="0" min="0" onfocus="this.select()">
-        <button class="btn-gold" onclick="saveTickets()">UKLIDIT BRAŠNU</button>
+        <h3>STANOVIŠTĚ: <span id="modal-station"></span></h3>
+        <p>Zadejte počet prodaných jízdenek:</p>
+        <input type="number" id="input-tickets" value="0" onfocus="this.select()">
+        <button class="btn-gold" onclick="confirmStation()">POTVRDIT A ODJET</button>
     </div>
 </div>
 
-<div id="departure-modal" class="modal">
+<div id="pause-modal" class="modal">
     <div class="modal-content">
-        <h3 id="departure-text"></h3>
-        <button class="btn-green" onclick="closeDeparture()">ANO, ODJÍŽDÍM</button>
+        <h2 style="color:var(--accent)">☕ PŘESTÁVKA</h2>
+        <p id="pause-msg"></p>
+        <div id="pause-timer" style="font-size:2rem; margin:20px 0; font-weight:bold;">00:00</div>
+        <button id="resume-btn" class="btn-green hidden" onclick="startNextRound()">HLÁSÍM ŽE JSEM ZPĚT</button>
     </div>
 </div>
 
 <audio id="coin-sound" src="mixkit-clinking-coins-1993.wav"></audio>
 
 <script>
-    const WEBHOOK_LOG = "https://discord.com/api/webhooks/1462379181290553378/7szxSP1bgAiR1diwDixyPPrXxklYWVGdLn3xZy8czqxGbqda9wtryXNV_zqJXL3PHGKO";
-    
     const trasy = [
-        { n: "LINIE I. - HLAVNÍ OKRUH", gap: 5, stop: ["Saint Denis", "Emerald", "Valentine", "Flatneck", "Riggs", "Wallace", "Bacchus", "Annesburg", "Van Horn", "Saint Denis"] },
-        { n: "LINIE II. - ZÁPADNÍ SPOJKA", gap: 6, stop: ["Saint Denis", "Rhodes", "Flatneck", "Blackwater", "MacFarlane", "Montana", "Flatneck", "Valentine", "Saint Denis"] }
+        { n: "LINIE I.", gap: 5, stop: ["Saint Denis", "Emerald", "Valentine", "Flatneck", "Riggs", "Wallace", "Annesburg", "Saint Denis"] },
+        { n: "LINIE II.", gap: 6, stop: ["Saint Denis", "Rhodes", "Flatneck", "Blackwater", "MacFarlane", "Montana", "Valentine", "Saint Denis"] }
     ];
 
-    let shiftData = { 
-        worker: "", 
-        initialRounds: 0, 
-        currentRound: 1, 
-        totalTickets: 0, 
+    let shift = {
+        worker: "",
+        maxRounds: 0,
+        currentRound: 1,
+        pauseMins: 0,
         totalMoney: 0,
-        currentRoute: null,
-        currentStationIdx: 0,
-        startTime: null,
-        timetableData: [] // Ukládá vypočítané časy pro porovnání
+        totalTickets: 0,
+        activeRoute: null,
+        stationIdx: 0,
+        times: [],
+        cargo: { load: [], unload: [] }
     };
 
-    function goToStep2() {
-        shiftData.worker = document.getElementById('user-select').value;
-        shiftData.initialRounds = parseInt(document.getElementById('initial-rounds').value) || 0;
-        document.getElementById('step-1').classList.add('hidden');
-        document.getElementById('step-2').classList.remove('hidden');
-    }
-
-    function generateShift(typ) {
-        shiftData.currentRoute = trasy[Math.floor(Math.random() * trasy.length)];
-        shiftData.startTime = new Date();
+    function initShift() {
+        shift.worker = document.getElementById('user-select').value;
+        shift.maxRounds = parseInt(document.getElementById('shift-rounds').value);
+        shift.pauseMins = parseInt(document.getElementById('pause-duration').value);
         
-        // Předvýpočet jízdního řádu
-        shiftData.timetableData = shiftData.currentRoute.stop.map((s, i) => {
-            return new Date(shiftData.startTime.getTime() + (i * shiftData.currentRoute.gap * 60000));
-        });
-
-        startRoute();
+        document.getElementById('step-setup').classList.add('hidden');
+        showPrep();
     }
 
-    function startRoute() {
-        document.getElementById('step-2').classList.add('hidden');
+    function showPrep() {
+        document.getElementById('step-prep').classList.remove('hidden');
         document.getElementById('status-display').classList.remove('hidden');
-        document.getElementById('step-4').classList.remove('hidden');
+        document.getElementById('prep-title').innerText = `PŘÍPRAVA KOLA ${shift.currentRound} / ${shift.maxRounds}`;
+        document.getElementById('stat-round').innerText = `${shift.currentRound} / ${shift.maxRounds}`;
+        updateCargoList();
+    }
+
+    function updateCargoList() {
+        const rIdx = document.getElementById('route-select').value;
+        const stops = trasy[rIdx].stop;
+        let loadHtml = ""; let unloadHtml = "";
+        
+        stops.forEach(s => {
+            loadHtml += `<div class="cargo-item"><label>${s}</label><input type="checkbox" class="load-cb" value="${s}"></div>`;
+            unloadHtml += `<div class="cargo-item"><label>${s}</label><input type="checkbox" class="unload-cb" value="${s}"></div>`;
+        });
+        document.getElementById('load-list').innerHTML = loadHtml;
+        document.getElementById('unload-list').innerHTML = unloadHtml;
+    }
+
+    function generateLeg() {
+        const rIdx = document.getElementById('route-select').value;
+        shift.activeRoute = trasy[rIdx];
+        shift.stationIdx = 0;
+        
+        // Sběr vybrané nakládky
+        shift.cargo.load = Array.from(document.querySelectorAll('.load-cb:checked')).map(cb => cb.value);
+        shift.cargo.unload = Array.from(document.querySelectorAll('.unload-cb:checked')).map(cb => cb.value);
+
+        // Časy
+        let now = new Date();
+        shift.times = shift.activeRoute.stop.map((_, i) => new Date(now.getTime() + (i * shift.activeRoute.gap * 60000)));
+
+        document.getElementById('step-prep').classList.add('hidden');
+        document.getElementById('step-drive').classList.remove('hidden');
         renderTimetable();
     }
 
     function renderTimetable() {
         let html = "";
-        shiftData.currentRoute.stop.forEach((s, i) => {
-            let t = shiftData.timetableData[i];
-            let timeStr = t.getHours().toString().padStart(2, '0') + ":" + t.getMinutes().toString().padStart(2, '0');
-            let statusClass = i < shiftData.currentStationIdx ? "completed" : (i === shiftData.currentStationIdx ? "next" : "");
-            html += `<div class="station-row ${statusClass}" onclick="triggerArrival(${i})">
-                        <span>${s}</span><span>${timeStr}</span>
-                     </div>`;
+        shift.activeRoute.stop.forEach((s, i) => {
+            const time = shift.times[i].toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            let cls = i < shift.stationIdx ? "completed" : (i === shift.stationIdx ? "next" : "");
+            
+            let badges = "";
+            if(shift.cargo.load.includes(s)) badges += `<span class="cargo-badge">NAKLÁDKA</span>`;
+            if(shift.cargo.unload.includes(s)) badges += `<span class="cargo-badge">VYKLÁDKA</span>`;
+
+            html += `<div class="station-row ${cls}" onclick="openStation(${i})">
+                        <span>${s} ${badges}</span><span>${time}</span>
+                    </div>`;
         });
         document.getElementById('active-timetable').innerHTML = html;
-        document.getElementById('stat-round').innerText = `${shiftData.currentRound} / ${shiftData.initialRounds}`;
     }
 
-    function triggerArrival(idx) {
-        if (idx !== shiftData.currentStationIdx) return;
+    function openStation(idx) {
+        if(idx !== shift.stationIdx) return;
+        document.getElementById('modal-station').innerText = shift.activeRoute.stop[idx];
+        document.getElementById('ticket-modal').style.display = 'block';
+    }
+
+    function confirmStation() {
+        const tix = parseInt(document.getElementById('input-tickets').value) || 0;
+        shift.totalTickets += tix;
+        shift.totalMoney += (tix * 5);
         
-        // VÝPOČET ZPOŽDĚNÍ
-        let now = new Date();
-        let scheduled = shiftData.timetableData[idx];
-        let diffMs = now - scheduled;
-        let diffMins = Math.floor(diffMs / 60000);
-
-        let delayEl = document.getElementById('stat-delay');
-        if (diffMins > 0) {
-            delayEl.innerText = `+${diffMins} min`;
-            delayEl.className = "stat-val delay-bad";
-        } else {
-            delayEl.innerText = "Včas";
-            delayEl.className = "stat-val delay-good";
-        }
-
-        const station = shiftData.currentRoute.stop[idx];
-        document.getElementById('dispatch-text').innerText = `Výpravčí stanice ${station} se kouká, jestli už jsi přijel/a?`;
-        document.getElementById('dispatch-modal').style.display = 'block';
-    }
-
-    function handleArrival(arrived) {
-        document.getElementById('dispatch-modal').style.display = 'none';
-        if (arrived) {
-            const station = shiftData.currentRoute.stop[shiftData.currentStationIdx];
-            document.getElementById('ticket-station-name').innerText = `Příjezd: ${station}`;
-            document.getElementById('ticket-modal').style.display = 'block';
-        } else {
-            setTimeout(() => {
-                document.getElementById('dispatch-modal').style.display = 'block';
-            }, 60000);
-        }
-    }
-
-    function saveTickets() {
-        let count = parseInt(document.getElementById('current-tickets').value) || 0;
-        shiftData.totalTickets += count;
-        shiftData.totalMoney += (count * 5);
-        
-        document.getElementById('stat-tickets').innerText = shiftData.totalTickets;
-        document.getElementById('stat-money').innerText = `${shiftData.totalMoney} USD`;
-        document.getElementById('current-tickets').value = 0;
-        document.getElementById('ticket-modal').style.display = 'none';
-
-        const station = shiftData.currentRoute.stop[shiftData.currentStationIdx];
-        document.getElementById('departure-text').innerText = `Vidí výpravčí, že odjíždíš ze stanice ${station}?`;
-        document.getElementById('departure-modal').style.display = 'block';
-    }
-
-    function closeDeparture() {
-        document.getElementById('departure-modal').style.display = 'none';
+        document.getElementById('stat-tickets').innerText = shift.totalTickets;
+        document.getElementById('stat-money').innerText = `${shift.totalMoney} USD`;
         document.getElementById('coin-sound').play();
         
-        shiftData.currentStationIdx++;
-        if (shiftData.currentStationIdx >= shiftData.currentRoute.stop.length) {
-            showFinalReport();
+        document.getElementById('ticket-modal').style.display = 'none';
+        document.getElementById('input-tickets').value = 0;
+
+        shift.stationIdx++;
+        if(shift.stationIdx >= shift.activeRoute.stop.length) {
+            finishRound();
         } else {
             renderTimetable();
         }
     }
 
-    async function showFinalReport() {
-        document.getElementById('step-4').classList.add('hidden');
-        document.getElementById('step-5').classList.remove('hidden');
-        
-        let finalRounds = shiftData.initialRounds + shiftData.currentRound;
-        let avgDelay = document.getElementById('stat-delay').innerText;
+    function finishRound() {
+        if(shift.currentRound < shift.maxRounds) {
+            startPause();
+        } else {
+            alert("SMĚNA DOKONČENA! Skvělá práce.");
+            location.reload();
+        }
+    }
 
-        document.getElementById('final-summary').innerHTML = `
-            <h3 style="color:var(--accent); margin-top:0;">VÝSLEDEK SMĚNY</h3>
-            <strong>Strojvůdce:</strong> ${shiftData.worker}<br>
-            <strong>🎫 Prodaných jízdenek:</strong> ${shiftData.totalTickets}<br>
-            <strong>⏱ Konečná dochvilnost:</strong> ${avgDelay}<br>
-            <strong>💰 Celkem vyděláno:</strong> ${shiftData.totalMoney} USD<br>
-            <hr style="border:0; border-top:1px solid #444;">
-            <strong>🔄 Nový stav historie kol:</strong> ${finalRounds}
-        `;
+    function startPause() {
+        document.getElementById('step-drive').classList.add('hidden');
+        const modal = document.getElementById('pause-modal');
+        modal.style.display = 'block';
 
-        await fetch(WEBHOOK_LOG, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                embeds: [{
-                    title: "CRC - UKONČENÍ SLUŽEBNÍHO PROTOKOLU",
-                    fields: [
-                        { name: "Zaměstnanec", value: shiftData.worker, inline: true },
-                        { name: "Jízdenky / Zisk", value: `${shiftData.totalTickets} ks / ${shiftData.totalMoney} USD`, inline: true },
-                        { name: "Dochvilnost", value: avgDelay, inline: true },
-                        { name: "Celková historie kol", value: finalRounds.toString() }
-                    ],
-                    color: 3066993,
-                    footer: { text: "Continental Rail Company - 1899" }
-                }]
-            })
-        });
+        let end = new Date(new Date().getTime() + shift.pauseMins * 60000);
+        document.getElementById('pause-msg').innerText = `Ahoj ${shift.worker.split(' ')[0]}! Právě ti začala přestávka, která ti končí v ${end.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}.`;
+
+        let timerObj = setInterval(() => {
+            let diff = end - new Date();
+            if(diff <= 0) {
+                clearInterval(timerObj);
+                document.getElementById('pause-timer').innerText = "KONEC PAUZY";
+                document.getElementById('resume-btn').classList.remove('hidden');
+            } else {
+                let m = Math.floor(diff/60000);
+                let s = Math.floor((diff%60000)/1000);
+                document.getElementById('pause-timer').innerText = `${m}:${s.toString().padStart(2,'0')}`;
+            }
+        }, 1000);
+    }
+
+    function startNextRound() {
+        shift.currentRound++;
+        document.getElementById('pause-modal').style.display = 'none';
+        document.getElementById('resume-btn').classList.add('hidden');
+        showPrep();
     }
 </script>
 </body>
 </html>
-
