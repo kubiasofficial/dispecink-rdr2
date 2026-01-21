@@ -13,19 +13,25 @@ body {
     font-family: 'Libre Baskerville', serif;
 }
 
+/* HLAVNÍ KONTEJNER */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 /* KNIHA */
 .book {
-    max-width: 800px;
-    margin: 60px auto;
+    width: 800px;
     background: #f3e7c9;
     padding: 60px;
+    margin-top: 60px;
     position: relative;
     box-shadow:
         0 0 0 8px #3b2f1e,
         0 20px 50px rgba(0,0,0,0.7);
 }
 
-/* HŘBET */
 .book::before {
     content: "";
     position: absolute;
@@ -39,12 +45,9 @@ body {
 
 .page {
     display: none;
-    animation: fade 0.6s ease;
+    animation: fade 0.5s ease;
 }
-
-.page.active {
-    display: block;
-}
+.page.active { display: block; }
 
 @keyframes fade {
     from { opacity: 0; }
@@ -73,9 +76,9 @@ h1, h2 {
     text-align: justify;
 }
 
-/* OVLÁDÁNÍ */
+/* OVLÁDÁNÍ KNIHY */
 .controls {
-    margin-top: 50px;
+    margin-top: 40px;
     display: flex;
     justify-content: space-between;
 }
@@ -85,7 +88,6 @@ button {
     border: 1px solid #5a4a32;
     padding: 10px 20px;
     font-family: inherit;
-    font-size: 14px;
     cursor: pointer;
 }
 
@@ -94,87 +96,94 @@ button:hover {
     color: #f3e7c9;
 }
 
-footer {
-    margin-top: 40px;
+/* FUNKCE POD KNIHOU */
+.functions {
+    width: 800px;
+    margin: 40px 0 80px;
+    padding: 30px;
+    background: #1f1f1f;
+    border: 1px solid #5a4a32;
+    color: #f3e7c9;
     text-align: center;
-    font-size: 12px;
-    opacity: 0.8;
+}
+
+.functions h3 {
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+}
+
+.func-btn {
+    margin: 10px;
+    padding: 12px 20px;
+    border: 1px solid #5a4a32;
+    background: none;
+    color: #f3e7c9;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.func-btn:hover {
+    background: #5a4a32;
+    color: #1f1f1f;
 }
 </style>
 </head>
 
 <body>
 
-<div class="book">
+<div class="container">
 
-    <!-- STRANA 1 -->
-    <div class="page active">
-        <h1>Continental Rail Company</h1>
-        <div class="subtitle">Archiv zaměstnanců – Rok Páně 1899</div>
+    <!-- 📖 KNIHA -->
+    <div class="book">
 
-        <div class="divider"></div>
+        <div class="page active">
+            <h1>Continental Rail Company</h1>
+            <div class="subtitle">Archiv – 1899</div>
+            <div class="divider"></div>
+            <div class="text">
+                Oficiální záznamy osob spojených se společností
+                Continental Rail Company.
+            </div>
+        </div>
 
-        <div class="text">
-            Tento svazek obsahuje oficiální záznamy osob spojených  
-            se železniční společností Continental Rail Company.  
-            Každá stránka nese jméno, osud a podpis své doby.
+        <div class="page">
+            <h2>Joshua Thorne</h2>
+            <div class="divider"></div>
+            <div class="text">Zkušený muž železnice...</div>
+        </div>
+
+        <div class="page">
+            <h2>Henry Brown</h2>
+            <div class="divider"></div>
+            <div class="text">Správce vozového parku...</div>
+        </div>
+
+        <div class="page">
+            <h2>Elizabeth Brown</h2>
+            <div class="divider"></div>
+            <div class="text">Administrativa společnosti...</div>
+        </div>
+
+        <div class="page">
+            <h2>Nicholas Carter</h2>
+            <div class="divider"></div>
+            <div class="text">Muž s minulostí...</div>
+        </div>
+
+        <div class="controls">
+            <button onclick="prevPage()">◀ Předchozí</button>
+            <button onclick="nextPage()">Další ▶</button>
         </div>
     </div>
 
-    <!-- STRANA 2 -->
-    <div class="page">
-        <h2>Joshua Thorne</h2>
-        <div class="divider"></div>
-        <div class="text">
-            Zkušený muž železnice, známý svou přesností a klidem  
-            i v těch nejtemnějších nocích na trati.  
-            Sloužil na dálkových linkách a byl považován  
-            za muže, na kterého je spoleh.
-        </div>
+    <!-- 🔧 FUNKCE POD KNIHOU -->
+    <div class="functions">
+        <h3>Firemní funkce</h3>
+        <button class="func-btn">Dispečink</button>
+        <button class="func-btn">Výkazy z jízd</button>
+        <button class="func-btn">Jízdní řády</button>
+        <button class="func-btn">Zaměstnanci</button>
     </div>
-
-    <!-- STRANA 3 -->
-    <div class="page">
-        <h2>Henry Brown</h2>
-        <div class="divider"></div>
-        <div class="text">
-            Technik a správce vozového parku.  
-            Jeho ruce znaly každý šroub a každý ventil.  
-            Bez jeho práce by žádný vlak neopustil stanici.
-        </div>
-    </div>
-
-    <!-- STRANA 4 -->
-    <div class="page">
-        <h2>Elizabeth Brown</h2>
-        <div class="divider"></div>
-        <div class="text">
-            Administrativní duše společnosti.  
-            Vedla záznamy, jízdní řády a korespondenci.  
-            Říkalo se, že ví o pohybu vlaků víc než samotní strojvedoucí.
-        </div>
-    </div>
-
-    <!-- STRANA 5 -->
-    <div class="page">
-        <h2>Nicholas Carter</h2>
-        <div class="divider"></div>
-        <div class="text">
-            Muž s minulostí, která se příliš neprobírala.  
-            Často vysílán na odlehlé tratě, kde nebyly otázky  
-            a odpovědi zůstávaly v kouři lokomotiv.
-        </div>
-    </div>
-
-    <!-- OVLÁDÁNÍ -->
-    <div class="controls">
-        <button onclick="prevPage()">◀ Předchozí</button>
-        <button onclick="nextPage()">Další ▶</button>
-    </div>
-
-    <footer>
-        Continental Rail Company © 1899
-    </footer>
 
 </div>
 
@@ -182,9 +191,9 @@ footer {
 let currentPage = 0;
 const pages = document.querySelectorAll('.page');
 
-function showPage(index) {
+function showPage(i) {
     pages.forEach(p => p.classList.remove('active'));
-    pages[index].classList.add('active');
+    pages[i].classList.add('active');
 }
 
 function nextPage() {
@@ -204,6 +213,8 @@ function prevPage() {
 
 </body>
 </html>
+
+
 
 
 
