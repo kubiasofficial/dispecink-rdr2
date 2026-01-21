@@ -1,124 +1,210 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-    <meta charset="UTF-8">
-    <title>Continental Rail Company</title>
+<meta charset="UTF-8">
+<title>Continental Rail Company – Archiv 1899</title>
 
-    <!-- Starobylé písmo -->
-    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
 
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background: #2b2b2b;
-            font-family: 'Libre Baskerville', serif;
-        }
+<style>
+body {
+    margin: 0;
+    background: #2b2b2b;
+    font-family: 'Libre Baskerville', serif;
+}
 
-        /* Kniha */
-        .book {
-            max-width: 700px;
-            margin: 60px auto;
-            background: #f3e7c9;
-            padding: 50px;
-            box-shadow:
-                0 0 0 8px #3b2f1e,
-                0 15px 40px rgba(0,0,0,0.6);
-            border-radius: 4px;
-            position: relative;
-        }
+/* KNIHA */
+.book {
+    max-width: 800px;
+    margin: 60px auto;
+    background: #f3e7c9;
+    padding: 60px;
+    position: relative;
+    box-shadow:
+        0 0 0 8px #3b2f1e,
+        0 20px 50px rgba(0,0,0,0.7);
+}
 
-        /* Hřbet knihy */
-        .book::before {
-            content: "";
-            position: absolute;
-            left: -20px;
-            top: 0;
-            width: 20px;
-            height: 100%;
-            background: #2a1d12;
-            box-shadow: inset -3px 0 6px rgba(0,0,0,0.6);
-        }
+/* HŘBET */
+.book::before {
+    content: "";
+    position: absolute;
+    left: -25px;
+    top: 0;
+    width: 25px;
+    height: 100%;
+    background: #2a1d12;
+    box-shadow: inset -4px 0 6px rgba(0,0,0,0.6);
+}
 
-        h1 {
-            text-align: center;
-            font-size: 34px;
-            letter-spacing: 2px;
-            margin-bottom: 10px;
-        }
+.page {
+    display: none;
+    animation: fade 0.6s ease;
+}
 
-        .subtitle {
-            text-align: center;
-            font-size: 14px;
-            margin-bottom: 40px;
-            font-style: italic;
-        }
+.page.active {
+    display: block;
+}
 
-        .divider {
-            border-top: 2px solid #5a4a32;
-            margin: 30px 0;
-        }
+@keyframes fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
 
-        h2 {
-            text-align: center;
-            font-size: 22px;
-            margin-bottom: 25px;
-        }
+h1, h2 {
+    text-align: center;
+    letter-spacing: 2px;
+}
 
-        ul {
-            list-style: none;
-            padding: 0;
-            text-align: center;
-        }
+.subtitle {
+    text-align: center;
+    font-style: italic;
+    margin-bottom: 40px;
+}
 
-        li {
-            margin: 15px 0;
-        }
+.divider {
+    border-top: 2px solid #5a4a32;
+    margin: 30px 0;
+}
 
-        a {
-            text-decoration: none;
-            color: #2b1e12;
-            font-size: 18px;
-            padding: 8px 16px;
-            border: 1px solid #5a4a32;
-            transition: all 0.3s ease;
-        }
+.text {
+    font-size: 17px;
+    line-height: 1.7;
+    text-align: justify;
+}
 
-        a:hover {
-            background: #5a4a32;
-            color: #f3e7c9;
-        }
+/* OVLÁDÁNÍ */
+.controls {
+    margin-top: 50px;
+    display: flex;
+    justify-content: space-between;
+}
 
-        footer {
-            margin-top: 50px;
-            text-align: center;
-            font-size: 12px;
-            opacity: 0.8;
-        }
-    </style>
+button {
+    background: none;
+    border: 1px solid #5a4a32;
+    padding: 10px 20px;
+    font-family: inherit;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #5a4a32;
+    color: #f3e7c9;
+}
+
+footer {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 12px;
+    opacity: 0.8;
+}
+</style>
 </head>
 
 <body>
-    <div class="book">
+
+<div class="book">
+
+    <!-- STRANA 1 -->
+    <div class="page active">
         <h1>Continental Rail Company</h1>
-        <div class="subtitle">Est. 1899</div>
+        <div class="subtitle">Archiv zaměstnanců – Rok Páně 1899</div>
 
         <div class="divider"></div>
 
-        <h2>Výběr záznamů</h2>
-
-        <ul>
-            <li><a href="#">Joshua Thorne</a></li>
-            <li><a href="#">Henry Brown</a></li>
-            <li><a href="#">Elizabeth Brown</a></li>
-            <li><a href="#">Nicholas Carter</a></li>
-        </ul>
-
-        <footer>
-            Archiv společnosti • Rok Páně 1899
-        </footer>
+        <div class="text">
+            Tento svazek obsahuje oficiální záznamy osob spojených  
+            se železniční společností Continental Rail Company.  
+            Každá stránka nese jméno, osud a podpis své doby.
+        </div>
     </div>
+
+    <!-- STRANA 2 -->
+    <div class="page">
+        <h2>Joshua Thorne</h2>
+        <div class="divider"></div>
+        <div class="text">
+            Zkušený muž železnice, známý svou přesností a klidem  
+            i v těch nejtemnějších nocích na trati.  
+            Sloužil na dálkových linkách a byl považován  
+            za muže, na kterého je spoleh.
+        </div>
+    </div>
+
+    <!-- STRANA 3 -->
+    <div class="page">
+        <h2>Henry Brown</h2>
+        <div class="divider"></div>
+        <div class="text">
+            Technik a správce vozového parku.  
+            Jeho ruce znaly každý šroub a každý ventil.  
+            Bez jeho práce by žádný vlak neopustil stanici.
+        </div>
+    </div>
+
+    <!-- STRANA 4 -->
+    <div class="page">
+        <h2>Elizabeth Brown</h2>
+        <div class="divider"></div>
+        <div class="text">
+            Administrativní duše společnosti.  
+            Vedla záznamy, jízdní řády a korespondenci.  
+            Říkalo se, že ví o pohybu vlaků víc než samotní strojvedoucí.
+        </div>
+    </div>
+
+    <!-- STRANA 5 -->
+    <div class="page">
+        <h2>Nicholas Carter</h2>
+        <div class="divider"></div>
+        <div class="text">
+            Muž s minulostí, která se příliš neprobírala.  
+            Často vysílán na odlehlé tratě, kde nebyly otázky  
+            a odpovědi zůstávaly v kouři lokomotiv.
+        </div>
+    </div>
+
+    <!-- OVLÁDÁNÍ -->
+    <div class="controls">
+        <button onclick="prevPage()">◀ Předchozí</button>
+        <button onclick="nextPage()">Další ▶</button>
+    </div>
+
+    <footer>
+        Continental Rail Company © 1899
+    </footer>
+
+</div>
+
+<script>
+let currentPage = 0;
+const pages = document.querySelectorAll('.page');
+
+function showPage(index) {
+    pages.forEach(p => p.classList.remove('active'));
+    pages[index].classList.add('active');
+}
+
+function nextPage() {
+    if (currentPage < pages.length - 1) {
+        currentPage++;
+        showPage(currentPage);
+    }
+}
+
+function prevPage() {
+    if (currentPage > 0) {
+        currentPage--;
+        showPage(currentPage);
+    }
+}
+</script>
+
 </body>
 </html>
+
+
 
 
