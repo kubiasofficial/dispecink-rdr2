@@ -15,7 +15,7 @@ body {
     color: #d8c08a;
 }
 
-/* HLAVNÍ PANEL */
+/* PANEL */
 .main-panel {
     width: 520px;
     margin: 80px auto;
@@ -25,7 +25,6 @@ body {
     box-shadow: 0 0 40px rgba(0,0,0,0.8);
 }
 
-/* NADPIS */
 .title {
     text-align: center;
     letter-spacing: 3px;
@@ -33,7 +32,6 @@ body {
     margin-bottom: 20px;
 }
 
-/* PODNADPIS */
 .subtitle {
     text-align: center;
     font-size: 11px;
@@ -47,7 +45,7 @@ body {
     margin: 18px 0;
 }
 
-/* SEZNAM JMEN */
+/* JMENÁ */
 .list {
     display: flex;
     flex-direction: column;
@@ -71,6 +69,52 @@ body {
     background: #b89a63;
     color: #1a140c;
 }
+
+/* SMĚNY */
+.shift-box {
+    display: none;
+    margin-top: 25px;
+    animation: fade 0.4s ease;
+}
+
+.shift-box.active {
+    display: block;
+}
+
+@keyframes fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.shift-title {
+    text-align: center;
+    font-size: 12px;
+    margin-bottom: 15px;
+    letter-spacing: 1px;
+}
+
+.shifts {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.shift {
+    padding: 10px;
+    border: 1px solid rgba(199,168,106,0.4);
+    cursor: pointer;
+    text-align: center;
+    transition: 0.2s;
+}
+
+.shift:hover {
+    background: rgba(199,168,106,0.15);
+}
+
+.shift.active {
+    background: #b89a63;
+    color: #1a140c;
+}
 </style>
 </head>
 
@@ -83,13 +127,44 @@ body {
 
     <div class="subtitle">SEZNAM STROJVEDOUCÍCH VE SLUŽBĚ</div>
 
+    <!-- JMÉNA -->
     <div class="list">
-        <div class="item active">§ ELIZABETH BROWN</div>
-        <div class="item">§ JOSHUA THORNE</div>
-        <div class="item">§ HENRY BROWN</div>
-        <div class="item">§ NICHOLAS CARTER</div>
+        <div class="item" onclick="selectPerson(this)">§ ELIZABETH BROWN</div>
+        <div class="item" onclick="selectPerson(this)">§ JOSHUA THORNE</div>
+        <div class="item" onclick="selectPerson(this)">§ HENRY BROWN</div>
+        <div class="item" onclick="selectPerson(this)">§ NICHOLAS CARTER</div>
+    </div>
+
+    <!-- SMĚNY -->
+    <div id="shiftBox" class="shift-box">
+        <div class="divider"></div>
+        <div class="shift-title">VÝBĚR SMĚNY</div>
+
+        <div class="shifts">
+            <div class="shift" onclick="selectShift(this)">RANNÍ (5–15)</div>
+            <div class="shift" onclick="selectShift(this)">ODPOLEDNÍ (15–22)</div>
+            <div class="shift" onclick="selectShift(this)">NOČNÍ (22–5)</div>
+        </div>
     </div>
 </div>
 
+<script>
+function selectPerson(el) {
+    document.querySelectorAll('.item').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+
+    document.getElementById('shiftBox').classList.add('active');
+
+    document.querySelectorAll('.shift').forEach(s => s.classList.remove('active'));
+}
+
+function selectShift(el) {
+    document.querySelectorAll('.shift').forEach(s => s.classList.remove('active'));
+    el.classList.add('active');
+}
+</script>
+
 </body>
 </html>
+
+
