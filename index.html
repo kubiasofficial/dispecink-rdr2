@@ -2,124 +2,123 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <style>
-        body { background-color: #1e1c1a; color: #d2c1ae; font-family: "Courier New", monospace; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .log-book { background-color: #2d2a27; border: 1px solid #b09060; padding: 40px; width: 700px; box-shadow: 0 0 30px rgba(0,0,0,0.7); text-align: center; }
-        h1 { color: #b09060; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 20px; }
-        .hidden { display: none; }
-        
-        /* Styl tlačítek a seznamů dle image_1fb9e8.png */
-        .option-box { border: 1px solid #4d453d; padding: 15px; margin: 10px 0; cursor: pointer; text-align: left; text-transform: uppercase; transition: 0.2s; }
-        .option-box:hover { border-color: #b09060; background: #333; }
-        .option-box.selected { background-color: #b09060; color: #1a1816; font-weight: bold; }
-        
-        /* Historie dle image_1fbdec.png */
-        input[type="number"] { width: 100%; padding: 15px; background: #141210; color: #d2c1ae; border: 1px solid #4d453d; font-size: 2rem; text-align: center; margin: 20px 0; }
-        
-        .gold-btn { background: #b09060; color: #1a1816; border: none; padding: 15px 30px; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-top: 20px; font-family: "Courier New"; }
+    <title>Continental Rail Company</title>
 
-        /* Protokol jízdy dle image_1f3ea1.png */
-        .tt-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #333; }
-        .tag { background: #b0906033; color: #b09060; padding: 2px 5px; font-size: 0.7rem; margin-left: 10px; border: 1px solid #b09060; }
+    <!-- Starobylé písmo -->
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #2b2b2b;
+            font-family: 'Libre Baskerville', serif;
+        }
+
+        /* Kniha */
+        .book {
+            max-width: 700px;
+            margin: 60px auto;
+            background: #f3e7c9;
+            padding: 50px;
+            box-shadow:
+                0 0 0 8px #3b2f1e,
+                0 15px 40px rgba(0,0,0,0.6);
+            border-radius: 4px;
+            position: relative;
+        }
+
+        /* Hřbet knihy */
+        .book::before {
+            content: "";
+            position: absolute;
+            left: -20px;
+            top: 0;
+            width: 20px;
+            height: 100%;
+            background: #2a1d12;
+            box-shadow: inset -3px 0 6px rgba(0,0,0,0.6);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 34px;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 14px;
+            margin-bottom: 40px;
+            font-style: italic;
+        }
+
+        .divider {
+            border-top: 2px solid #5a4a32;
+            margin: 30px 0;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 22px;
+            margin-bottom: 25px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            text-align: center;
+        }
+
+        li {
+            margin: 15px 0;
+        }
+
+        a {
+            text-decoration: none;
+            color: #2b1e12;
+            font-size: 18px;
+            padding: 8px 16px;
+            border: 1px solid #5a4a32;
+            transition: all 0.3s ease;
+        }
+
+        a:hover {
+            background: #5a4a32;
+            color: #f3e7c9;
+        }
+
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 12px;
+            opacity: 0.8;
+        }
     </style>
 </head>
+
 <body>
+    <div class="book">
+        <h1>Continental Rail Company</h1>
+        <div class="subtitle">Est. 1899</div>
 
-<div class="log-book">
-    <h1>CONTINENTAL RAIL COMPANY</h1>
+        <div class="divider"></div>
 
-    <div id="step1">
-        <p style="font-size: 0.7rem; color: #a08050;">SEZNAM STROJVŮDCŮ VE SLUŽBĚ:</p>
-        <div class="option-box" onclick="sel(this, 'name', 'ELIZABETH BROWN')">§ ELIZABETH BROWN</div>
-        <div class="option-box" onclick="sel(this, 'name', 'JOSHUE THORNE')">§ JOSHUE THORNE</div>
-        <div class="option-box" onclick="sel(this, 'name', 'HENRY BROWN')">§ HENRY BROWN</div>
-        <div class="option-box" onclick="sel(this, 'name', 'NICHOLAS CARTER')">§ NICHOLAS CARTER</div>
-        <button class="gold-btn" onclick="go(2)">POKRAČOVAT</button>
+        <h2>Výběr záznamů</h2>
+
+        <ul>
+            <li><a href="#">Joshua Thorne</a></li>
+            <li><a href="#">Henry Brown</a></li>
+            <li><a href="#">Elizabeth Brown</a></li>
+            <li><a href="#">Nicholas Carter</a></li>
+        </ul>
+
+        <footer>
+            Archiv společnosti • Rok Páně 1899
+        </footer>
     </div>
-
-    <div id="step2" class="hidden">
-        <p style="font-size: 0.7rem; color: #a08050;">POČET KOL PŘED ZAČÁTKEM SMĚNY (HISTORIE):</p>
-        <input type="number" id="hist" value="0">
-        <p style="font-size: 0.7rem; color: #a08050;">VYBERTE TYP SLUŽBY:</p>
-        <div class="option-box" onclick="sel(this, 'shift', 'RANNÍ')">§ RANNÍ (05:00 - 15:00)</div>
-        <div class="option-box" onclick="sel(this, 'shift', 'ODPOLEDNÍ')">§ ODPOLEDNÍ (15:00 - 22:00)</div>
-        <div class="option-box" onclick="sel(this, 'shift', 'NOČNÍ')">§ NOČNÍ (22:00 - 05:00)</div>
-        <button class="gold-btn" onclick="gen()">POKRAČOVAT K PLÁNU</button>
-    </div>
-
-    <div id="step3" class="hidden">
-        <p style="font-size: 0.7rem; color: #a08050;">[ PROSÍM OTEVŘI SI JÍZDNÍ ŘÁDY A ZKONTROLUJ SI SVOU SMĚNU ]</p>
-        <div id="rounds-btns" style="display:flex; justify-content:center; gap:10px; margin:20px 0;"></div>
-        <div id="preview" style="background:#141210; padding:20px; text-align:left; min-height:100px;"></div>
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px;">
-            <p>KONEC SMĚNY: <span id="endTime" style="color:#b09060; font-weight:bold;">--:--</span></p>
-            <button class="gold-btn" onclick="start()">SOUHLASÍM</button>
-        </div>
-    </div>
-</div>
-
-<script>
-    let data = { name: "", hist: 0, shift: "" };
-    const lines = [
-        { id: 1, n: "LINIE I. - HLAVNÍ OKRUH", t: 5, s: ["Saint Denis", "Emerald", "Valentine", "Flatneck", "Riggs", "Wallace", "Bacchus", "Annesburg", "Van Horn", "Saint Denis"], l: "Saint Denis", u: "Wallace" },
-        { id: 2, n: "LINIE II. - ZÁPADNÍ SPOJKA", t: 6, s: ["Saint Denis", "Rhodes", "Flatneck", "Blackwater", "MacFarlane's Ranch", "Montana", "Flatneck", "Valentine", "Saint Denis"], l: "Saint Denis", u: "MacFarlane's Ranch" },
-        { id: 3, n: "LINIE III. - SEVERNÍ SPOJ", t: 5, s: ["Saint Denis", "Van Horn", "Annesburg", "Bacchus Station", "Wallace Station", "Riggs Station", "Flatneck Station", "Rhodes"], l: "Saint Denis", u: "Wallace Station" },
-        { id: 4, n: "LINIE IV. - JIŽNÍ EKSPRES", t: 7, s: ["Saint Denis", "Rhodes", "Flatneck", "Riggs", "Blackwater", "Riggs", "Flatneck", "Saint Denis"], l: "Saint Denis", u: "Benedict Point" }
-    ];
-    let schedule = [];
-
-    function sel(el, key, val) {
-        el.parentElement.querySelectorAll('.option-box').forEach(x => x.classList.remove('selected'));
-        el.classList.add('selected');
-        data[key] = val;
-    }
-
-    function go(s) {
-        document.getElementById('step1').classList.add('hidden');
-        document.getElementById('step2').classList.remove('hidden');
-    }
-
-    function gen() {
-        data.hist = document.getElementById('hist').value;
-        document.getElementById('step2').classList.add('hidden');
-        document.getElementById('step3').classList.remove('hidden');
-        
-        let now = new Date();
-        let curr = new Date(now);
-        
-        for(let i=0; i<4; i++) {
-            let line = lines[i];
-            let round = { name: line.n, stops: [] };
-            line.s.forEach((st, idx) => {
-                let cargo = (st === line.l || st === line.u);
-                if(idx > 0) curr.setMinutes(curr.getMinutes() + line.t + (cargo ? 3 : 0));
-                round.stops.push({ n: st, t: curr.getHours() + ":" + curr.getMinutes().toString().padStart(2,'0'), c: st === line.l ? 'NAKLÁDKA' : (st === line.u ? 'VYKLÁDKA' : '') });
-            });
-            schedule.push(round);
-            // Pauza v Saint Denis po 2. a 3. kole (5 min)
-            if(i === 1 || i === 2) curr.setMinutes(curr.getMinutes() + 5);
-        }
-        
-        document.getElementById('endTime').innerText = curr.getHours() + ":" + curr.getMinutes().toString().padStart(2,'0');
-        let btns = "";
-        schedule.forEach((r, i) => btns += `<button class="gold-btn" style="padding:10px" onclick="showR(${i})">KOLO ${i+1}</button>`);
-        document.getElementById('rounds-btns').innerHTML = btns;
-    }
-
-    function showR(i) {
-        let r = schedule[i];
-        let html = `<p style="color:#b09060; font-weight:bold; border-bottom:1px solid #444;">${r.name}</p>`;
-        r.stops.forEach(s => html += `<div class="tt-row"><span>${s.n} ${s.c ? `<span class="tag">${s.c}</span>`:''}</span><span>${s.t}</span></div>`);
-        document.getElementById('preview').innerHTML = html;
-    }
-
-    async function start() {
-        await fetch("https://discord.com/api/webhooks/1462379181290553378/7szxSP1bgAiR1diwDixyPPrXxklYWVGdLn3xZy8czqxGbqda9wtryXNV_zqJXL3PHGKO", {
-            method: 'POST', headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({content: `🚂 **${data.name}** zahájil směnu (**${data.shift}**). Historie: ${data.hist} kol.`})
-        });
-        alert("Směna odstartována!");
-    }
-</script>
 </body>
 </html>
+
+
