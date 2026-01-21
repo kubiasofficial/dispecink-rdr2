@@ -12,24 +12,23 @@
         .stat-val { font-weight: bold; font-size: 1.1rem; color: var(--accent); }
         
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: var(--modal-bg); backdrop-filter: blur(5px); }
-        .modal-content { background: var(--card); margin: 10% auto; padding: 30px; border: 1px solid var(--accent); width: 400px; text-align: center; box-shadow: 0 0 50px #000; }
+        .modal-content { background: var(--card); margin: 10% auto; padding: 30px; border: 1px solid var(--accent); width: 450px; text-align: center; box-shadow: 0 0 50px #000; }
         
-        h1, h2 { text-align: center; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; }
+        h1, h2, h3 { text-align: center; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; }
         .hidden { display: none; }
         button { width: 100%; padding: 12px; margin: 10px 0; cursor: pointer; font-family: 'Georgia', serif; text-transform: uppercase; font-weight: bold; border-radius: 2px; border: 1px solid var(--accent); transition: 0.2s; }
         .btn-gold { background: var(--accent); color: #1a1816; }
         .btn-green { background: var(--success); color: white; border: none; }
         .btn-outline { background: transparent; color: var(--accent); }
         
-        input { width: 100%; padding: 10px; background: #1a1816; color: var(--text); border: 1px solid #4d453d; text-align: center; margin: 10px 0; box-sizing: border-box; font-size: 1.2rem; }
+        input, select { width: 100%; padding: 10px; background: #1a1816; color: var(--text); border: 1px solid #4d453d; text-align: center; margin: 10px 0; box-sizing: border-box; font-size: 1.1rem; }
         #active-timetable { font-family: 'Courier New', monospace; background: #141210; padding: 15px; border: 1px inset #333; line-height: 1.8; }
-        .station-row { display: flex; justify-content: space-between; padding: 8px 15px; border-bottom: 1px solid #222; cursor: pointer; }
+        .station-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 15px; border-bottom: 1px solid #222; cursor: pointer; }
         .station-row.completed { color: #666; text-decoration: line-through; }
         .station-row.next { border-left: 4px solid var(--accent); background: rgba(176, 144, 96, 0.05); }
         
-        /* Nové pro telegramy */
-        .cargo-zone { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; text-align: left; font-size: 0.8rem; border: 1px solid #444; padding: 10px; }
-        .cargo-zone h4 { margin: 0 0 5px 0; color: var(--accent); grid-column: span 2; text-align: center; }
+        .cargo-tag { font-size: 0.7rem; color: #fff; background: #6b5536; padding: 2px 5px; border-radius: 3px; margin-left: 10px; text-decoration: none !important; display: inline-block; }
+        .setup-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; text-align: left; font-size: 0.8rem; margin-bottom: 10px; padding: 5px; border-bottom: 1px solid #333; }
     </style>
 </head>
 <body>
@@ -47,7 +46,7 @@
     <div id="step-1" class="step">
         <h2>[ IDENTIFIKACE ]</h2>
         <label>Jméno strojvůdce:</label>
-        <select id="user-select" style="width:100%; padding:12px; background:#1a1816; color:var(--text); border:1px solid #4d453d;">
+        <select id="user-select">
             <option value="Elizabeth Brown">Elizabeth Brown</option>
             <option value="Joshue Thorne">Joshue Thorne</option>
             <option value="Henry Brown">Henry Brown</option>
@@ -57,7 +56,14 @@
         <input type="number" id="max-rounds" value="1">
         <label>Historie kol (před směnou):</label>
         <input type="number" id="initial-rounds" value="0">
-        <button class="btn-gold" onclick="goToStep2()">OTEVŘÍT SLUŽEBNÍ KNIHU</button>
+        <button class="btn-gold" onclick="goToStep2()">POKRAČOVAT K PLÁNU</button>
+    </div>
+
+    <div id="step-cargo" class="step hidden">
+        <h2>[ PLÁN NAKLÁDKY PRO SMĚNU ]</h2>
+        <p style="font-size: 0.8rem; text-align: center;">Zaškrtněte, kde během směny plánujete pracovat s telegramy:</p>
+        <div id="cargo-setup-list" style="max-height: 300px; overflow-y: auto; margin: 20px 0; border: 1px solid #444; padding: 10px;"></div>
+        <button class="btn-gold" onclick="goToStep3()">ULOŽIT PLÁN A VYBRAT SLUŽBU</button>
     </div>
 
     <div id="step-2" class="step hidden">
@@ -68,7 +74,8 @@
     </div>
 
     <div id="step-4" class="step hidden">
-        <h2 id="active-title">PROTOKOL JÍZDY</h2>
+        <h3 id="active-route-name" style="margin-bottom: 5px; font-size: 0.9rem; color: #888;"></h3>
+        <h2 id="active-title" style="margin-top: 0;">PROTOKOL JÍZDY</h2>
         <div id="active-timetable"></div>
         <p style="text-align:center; font-size:0.8rem; font-style:italic; margin-top:15px; color: var(--accent);">* Klikněte na stanici ihned po zastavení. *</p>
     </div>
@@ -86,16 +93,9 @@
     <div class="modal-content">
         <h3>ZÁZNAM STANICE</h3>
         <p id="ticket-station-name" style="color:var(--accent)"></p>
-        
-        <div class="cargo-zone">
-            <h4>TELEGRAMY / BALÍKY</h4>
-            <label><input type="checkbox" id="check-load"> NAKLÁDKA</label>
-            <label><input type="checkbox" id="check-unload"> VYKLÁDKA</label>
-        </div>
-
         <label>Prodané jízdenky:</label>
         <input type="number" id="current-tickets" value="0" min="0" onfocus="this.select()">
-        <button class="btn-gold" onclick="saveTickets()">UKLIDIT BRAŠNU</button>
+        <button class="btn-gold" onclick="saveTickets()">POTVRDIT</button>
     </div>
 </div>
 
@@ -103,10 +103,10 @@
 
 <div id="pause-modal" class="modal">
     <div class="modal-content">
-        <h2 style="color:var(--accent)">KÁVOVÁ PŘESTÁVKA</h2>
+        <h2 style="color:var(--accent)">☕ KÁVOVÁ PŘESTÁVKA</h2>
         <p id="pause-text"></p>
-        <div id="pause-timer" style="font-size:2rem; font-weight:bold; margin:20px 0;"></div>
-        <button id="resume-btn" class="btn-green hidden" onclick="nextRound()">HLÁSÍM ŽE JSEM ZPĚT</button>
+        <div id="pause-timer" style="font-size:2.5rem; font-weight:bold; margin:20px 0; color: var(--accent);">--:--</div>
+        <button id="resume-btn" class="btn-green hidden" onclick="nextRound()">HLÁSÍM, ŽE JSEM ZPĚT</button>
     </div>
 </div>
 
@@ -114,6 +114,10 @@
 
 <script>
     const WEBHOOK_LOG = "https://discord.com/api/webhooks/1462379181290553378/7szxSP1bgAiR1diwDixyPPrXxklYWVGdLn3xZy8czqxGbqda9wtryXNV_zqJXL3PHGKO";
+    
+    // Seznam všech možných stanic pro plánování
+    const allPossibleStations = ["Saint Denis", "Emerald", "Valentine", "Flatneck", "Riggs", "Wallace", "Bacchus", "Annesburg", "Van Horn", "Rhodes", "Blackwater", "MacFarlane", "Montana"];
+    
     const trasy = [
         { n: "LINIE I. - HLAVNÍ OKRUH", gap: 5, stop: ["Saint Denis", "Emerald", "Valentine", "Flatneck", "Riggs", "Wallace", "Bacchus", "Annesburg", "Van Horn", "Saint Denis"] },
         { n: "LINIE II. - ZÁPADNÍ SPOJKA", gap: 6, stop: ["Saint Denis", "Rhodes", "Flatneck", "Blackwater", "MacFarlane", "Montana", "Flatneck", "Valentine", "Saint Denis"] }
@@ -122,19 +126,48 @@
     let shiftData = { 
         worker: "", initialRounds: 0, maxRounds: 1, currentRound: 1,
         totalTickets: 0, totalMoney: 0, currentRoute: null,
-        currentStationIdx: 0, startTime: null, timetableData: []
+        currentStationIdx: 0, startTime: null, timetableData: [],
+        cargoPlan: {} // Ukládá: "StationName": {load: true/false, unload: true/false}
     };
 
     function goToStep2() {
         shiftData.worker = document.getElementById('user-select').value;
         shiftData.initialRounds = parseInt(document.getElementById('initial-rounds').value) || 0;
         shiftData.maxRounds = parseInt(document.getElementById('max-rounds').value) || 1;
+        
+        // Vygenerovat seznam pro plánování telegramů
+        let html = "";
+        allPossibleStations.sort().forEach(s => {
+            html += `
+            <div class="setup-grid">
+                <strong>${s}</strong>
+                <label><input type="checkbox" data-station="${s}" data-type="load"> NAKLÁDKA</label>
+                <label><input type="checkbox" data-station="${s}" data-type="unload"> VYKLÁDKA</label>
+            </div>`;
+        });
+        document.getElementById('cargo-setup-list').innerHTML = html;
+        
         document.getElementById('step-1').classList.add('hidden');
+        document.getElementById('step-cargo').classList.remove('hidden');
+    }
+
+    function goToStep3() {
+        // Uložit vybraný plán telegramů
+        const inputs = document.querySelectorAll('#cargo-setup-list input');
+        inputs.forEach(i => {
+            const s = i.getAttribute('data-station');
+            const type = i.getAttribute('data-type');
+            if (!shiftData.cargoPlan[s]) shiftData.cargoPlan[s] = { load: false, unload: false };
+            if (i.checked) shiftData.cargoPlan[s][type] = true;
+        });
+
+        document.getElementById('step-cargo').classList.add('hidden');
         document.getElementById('step-2').classList.remove('hidden');
     }
 
     function generateShift(typ) {
         shiftData.currentRoute = trasy[Math.floor(Math.random() * trasy.length)];
+        document.getElementById('active-route-name').innerText = shiftData.currentRoute.n;
         startRoundLogic();
     }
 
@@ -156,7 +189,19 @@
             let t = shiftData.timetableData[i];
             let timeStr = t.getHours().toString().padStart(2, '0') + ":" + t.getMinutes().toString().padStart(2, '0');
             let statusClass = i < shiftData.currentStationIdx ? "completed" : (i === shiftData.currentStationIdx ? "next" : "");
-            html += `<div class="station-row ${statusClass}" onclick="triggerArrival(${i})"><span>${s}</span><span>${timeStr}</span></div>`;
+            
+            // Přidat značky telegramů z plánu
+            let cargoHtml = "";
+            if (shiftData.cargoPlan[s]) {
+                if (shiftData.cargoPlan[s].load) cargoHtml += `<span class="cargo-tag">NAKLÁDKA 📦</span>`;
+                if (shiftData.cargoPlan[s].unload) cargoHtml += `<span class="cargo-tag">VYKLÁDKA 📥</span>`;
+            }
+
+            html += `
+            <div class="station-row ${statusClass}" onclick="triggerArrival(${i})">
+                <div><span>${s}</span>${cargoHtml}</div>
+                <span>${timeStr}</span>
+            </div>`;
         });
         document.getElementById('active-timetable').innerHTML = html;
         document.getElementById('stat-round').innerText = `${shiftData.currentRound} / ${shiftData.maxRounds}`;
@@ -171,14 +216,14 @@
         if (diffMins > 0) { delayEl.innerText = `+${diffMins} min`; delayEl.className = "stat-val delay-bad"; }
         else { delayEl.innerText = "Včas"; delayEl.className = "stat-val delay-good"; }
 
-        document.getElementById('dispatch-text').innerText = `Výpravčí stanice ${shiftData.currentRoute.stop[idx]} se kouká, jestli už jsi přijel/a?`;
+        document.getElementById('dispatch-text').innerText = `Výpravčí stanice ${shiftData.currentRoute.stop[idx]} vidí tvůj příjezd?`;
         document.getElementById('dispatch-modal').style.display = 'block';
     }
 
     function handleArrival(arrived) {
         document.getElementById('dispatch-modal').style.display = 'none';
         if (arrived) {
-            document.getElementById('ticket-station-name').innerText = `Příjezd: ${shiftData.currentRoute.stop[shiftData.currentStationIdx]}`;
+            document.getElementById('ticket-station-name').innerText = `Zastávka: ${shiftData.currentRoute.stop[shiftData.currentStationIdx]}`;
             document.getElementById('ticket-modal').style.display = 'block';
         } else {
             setTimeout(() => { document.getElementById('dispatch-modal').style.display = 'block'; }, 60000);
@@ -192,13 +237,10 @@
         document.getElementById('stat-tickets').innerText = shiftData.totalTickets;
         document.getElementById('stat-money').innerText = `${shiftData.totalMoney} USD`;
         
-        // Reset checkboxů pro příště
-        document.getElementById('check-load').checked = false;
-        document.getElementById('check-unload').checked = false;
         document.getElementById('current-tickets').value = 0;
         document.getElementById('ticket-modal').style.display = 'none';
 
-        document.getElementById('departure-text').innerText = `Vidí výpravčí, že odjíždíš ze stanice ${shiftData.currentRoute.stop[shiftData.currentStationIdx]}?`;
+        document.getElementById('departure-text').innerText = `Odjíždíš ze stanice ${shiftData.currentRoute.stop[shiftData.currentStationIdx]}?`;
         document.getElementById('departure-modal').style.display = 'block';
     }
 
@@ -224,14 +266,14 @@
     function runPause() {
         document.getElementById('step-4').classList.add('hidden');
         document.getElementById('pause-modal').style.display = 'block';
-        let pauseEnd = new Date(new Date().getTime() + 5 * 60000); // 5 minut pauza
-        document.getElementById('pause-text').innerText = `Ahoj ${shiftData.worker.split(' ')[0]}! Právě ti začala přestávka, která ti končí v ${pauseEnd.getHours().toString().padStart(2, '0')}:${pauseEnd.getMinutes().toString().padStart(2, '0')}. Dej mi vědět, až budeš zpět.`;
+        let pauseEnd = new Date(new Date().getTime() + 5 * 60000); 
+        document.getElementById('pause-text').innerText = `Ahoj ${shiftData.worker.split(' ')[0]}! Právě ti začala přestávka, která ti končí v ${pauseEnd.getHours().toString().padStart(2, '0')}:${pauseEnd.getMinutes().toString().padStart(2, '0')}.`;
         
         let timerInt = setInterval(() => {
             let remaining = Math.floor((pauseEnd - new Date()) / 1000);
             if (remaining <= 0) {
                 clearInterval(timerInt);
-                document.getElementById('pause-timer').innerText = "PAUZA KONČÍ";
+                document.getElementById('pause-timer').innerText = "KONEC PAUZY";
                 document.getElementById('resume-btn').classList.remove('hidden');
             } else {
                 let m = Math.floor(remaining / 60);
@@ -245,16 +287,16 @@
         shiftData.currentRound++;
         document.getElementById('pause-modal').style.display = 'none';
         document.getElementById('resume-btn').classList.add('hidden');
-        document.getElementById('step-2').classList.remove('hidden'); // Výběr další linky
+        document.getElementById('step-2').classList.remove('hidden'); 
     }
 
     async function showFinalReport() {
         document.getElementById('step-4').classList.add('hidden');
         document.getElementById('step-5').classList.remove('hidden');
         let finalRounds = shiftData.initialRounds + shiftData.currentRound;
-        document.getElementById('final-summary').innerHTML = `<h3>VÝSLEDEK SMĚNY</h3><strong>Strojvůdce:</strong> ${shiftData.worker}<br><strong>🎫 Jízdenky:</strong> ${shiftData.totalTickets}<br><strong>💰 Zisk:</strong> ${shiftData.totalMoney} USD<br><hr><strong>🔄 Historie kol:</strong> ${finalRounds}`;
-        // Webhook logování (nechávám původní)
-        await fetch(WEBHOOK_LOG, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ embeds: [{ title: "CRC - UKONČENÍ SMĚNY", fields: [{ name: "Zaměstnanec", value: shiftData.worker, inline: true }, { name: "Zisk", value: `${shiftData.totalMoney} USD`, inline: true }, { name: "Kola", value: finalRounds.toString() }], color: 3066993 }] }) });
+        document.getElementById('final-summary').innerHTML = `<h3>VÝSLEDEK SMĚNY</h3><strong>Strojvůdce:</strong> ${shiftData.worker}<br><strong>🎫 Jízdenky:</strong> ${shiftData.totalTickets}<br><strong>💰 Zisk:</strong> ${shiftData.totalMoney} USD<br><hr><strong>🔄 Celková historie kol:</strong> ${finalRounds}`;
+        
+        await fetch(WEBHOOK_LOG, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ embeds: [{ title: "CRC - KONEC SMĚNY", fields: [{ name: "Zaměstnanec", value: shiftData.worker, inline: true }, { name: "Zisk", value: `${shiftData.totalMoney} USD`, inline: true }, { name: "Nová Historie", value: finalRounds.toString() }], color: 3066993 }] }) });
     }
 </script>
 </body>
