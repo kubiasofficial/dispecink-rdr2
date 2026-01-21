@@ -3,140 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <style>
-        body { background-color: #1e1c1a; color: #d2c1ae; font-family: "Courier New", Courier, monospace; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .log-book { background-color: #2d2a27; border: 1px solid #b09060; padding: 40px; width: 750px; box-shadow: 0 0 30px rgba(0,0,0,0.7); text-align: center; }
-        h1 { color: #b09060; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 10px; }
-        h2 { color: #b09060; font-size: 1rem; margin-bottom: 30px; letter-spacing: 2px; }
+        body { background-color: #1e1c1a; color: #d2c1ae; font-family: "Courier New", monospace; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .log-book { background-color: #2d2a27; border: 1px solid #b09060; padding: 40px; width: 700px; box-shadow: 0 0 30px rgba(0,0,0,0.7); text-align: center; }
+        h1 { color: #b09060; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 20px; }
+        .hidden { display: none; }
         
-        /* Karty kol */
-        .rounds-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-bottom: 30px; }
-        .round-card { 
-            border: 1px solid #4d453d; padding: 15px; width: 120px; cursor: pointer; 
-            text-transform: uppercase; transition: 0.2s; font-size: 0.8rem; background: #1a1816;
-        }
-        .round-card:hover { border-color: #b09060; color: #b09060; }
-        .round-card.active { background-color: #b09060; color: #1a1816; font-weight: bold; }
+        /* Styl tlačítek a seznamů dle image_1fb9e8.png */
+        .option-box { border: 1px solid #4d453d; padding: 15px; margin: 10px 0; cursor: pointer; text-align: left; text-transform: uppercase; transition: 0.2s; }
+        .option-box:hover { border-color: #b09060; background: #333; }
+        .option-box.selected { background-color: #b09060; color: #1a1816; font-weight: bold; }
+        
+        /* Historie dle image_1fbdec.png */
+        input[type="number"] { width: 100%; padding: 15px; background: #141210; color: #d2c1ae; border: 1px solid #4d453d; font-size: 2rem; text-align: center; margin: 20px 0; }
+        
+        .gold-btn { background: #b09060; color: #1a1816; border: none; padding: 15px 30px; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-top: 20px; font-family: "Courier New"; }
 
-        /* Náhled jízdního řádu */
-        .timetable-preview { 
-            background: #141210; border: 1px solid #4d453d; padding: 20px; 
-            margin-bottom: 30px; text-align: left; max-height: 300px; overflow-y: auto;
-        }
-        .tt-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #222; font-size: 0.9rem; }
-        .cargo-tag { color: #b09060; font-size: 0.7rem; font-weight: bold; }
-
-        .footer-info { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #4d453d; padding-top: 20px; }
-        .end-time { color: #b09060; font-weight: bold; font-size: 1.1rem; }
-
-        .confirm-btn { 
-            background: #b09060; color: #1a1816; border: none; padding: 15px 30px; 
-            font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; font-family: "Courier New";
-        }
+        /* Protokol jízdy dle image_1f3ea1.png */
+        .tt-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #333; }
+        .tag { background: #b0906033; color: #b09060; padding: 2px 5px; font-size: 0.7rem; margin-left: 10px; border: 1px solid #b09060; }
     </style>
 </head>
 <body>
 
-<div class="log-book" id="shift-review">
+<div class="log-book">
     <h1>CONTINENTAL RAIL COMPANY</h1>
-    <h2>[ PROSÍM OTEVŘI SI JÍZDNÍ ŘÁDY A ZKONTROLUJ SI SVOU SMĚNU ]</h2>
 
-    <div class="rounds-container" id="rounds-list">
-        </div>
-
-    <div class="timetable-preview" id="tt-content">
-        <p style="text-align:center; color:#666;">Vyberte kolo pro náhled jízdního řádu</p>
+    <div id="step1">
+        <p style="font-size: 0.7rem; color: #a08050;">SEZNAM STROJVŮDCŮ VE SLUŽBĚ:</p>
+        <div class="option-box" onclick="sel(this, 'name', 'ELIZABETH BROWN')">§ ELIZABETH BROWN</div>
+        <div class="option-box" onclick="sel(this, 'name', 'JOSHUE THORNE')">§ JOSHUE THORNE</div>
+        <div class="option-box" onclick="sel(this, 'name', 'HENRY BROWN')">§ HENRY BROWN</div>
+        <div class="option-box" onclick="sel(this, 'name', 'NICHOLAS CARTER')">§ NICHOLAS CARTER</div>
+        <button class="gold-btn" onclick="go(2)">POKRAČOVAT</button>
     </div>
 
-    <div class="footer-info">
-        <div>KONEC SMĚNY: <span class="end-time" id="shift-end-display">--:--</span></div>
-        <button class="confirm-btn" onclick="startShift()">SOUHLASÍM</button>
+    <div id="step2" class="hidden">
+        <p style="font-size: 0.7rem; color: #a08050;">POČET KOL PŘED ZAČÁTKEM SMĚNY (HISTORIE):</p>
+        <input type="number" id="hist" value="0">
+        <p style="font-size: 0.7rem; color: #a08050;">VYBERTE TYP SLUŽBY:</p>
+        <div class="option-box" onclick="sel(this, 'shift', 'RANNÍ')">§ RANNÍ (05:00 - 15:00)</div>
+        <div class="option-box" onclick="sel(this, 'shift', 'ODPOLEDNÍ')">§ ODPOLEDNÍ (15:00 - 22:00)</div>
+        <div class="option-box" onclick="sel(this, 'shift', 'NOČNÍ')">§ NOČNÍ (22:00 - 05:00)</div>
+        <button class="gold-btn" onclick="gen()">POKRAČOVAT K PLÁNU</button>
+    </div>
+
+    <div id="step3" class="hidden">
+        <p style="font-size: 0.7rem; color: #a08050;">[ PROSÍM OTEVŘI SI JÍZDNÍ ŘÁDY A ZKONTROLUJ SI SVOU SMĚNU ]</p>
+        <div id="rounds-btns" style="display:flex; justify-content:center; gap:10px; margin:20px 0;"></div>
+        <div id="preview" style="background:#141210; padding:20px; text-align:left; min-height:100px;"></div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px;">
+            <p>KONEC SMĚNY: <span id="endTime" style="color:#b09060; font-weight:bold;">--:--</span></p>
+            <button class="gold-btn" onclick="start()">SOUHLASÍM</button>
+        </div>
     </div>
 </div>
 
 <script>
-    // Konfigurace linek a telegramů dle zadání
-    const config = {
-        lines: [
-            { id: 1, name: "LINIE I.", gap: 5, stops: ["Saint Denis", "Emerald", "Valentine", "Flatneck", "Riggs", "Wallace", "Bacchus", "Annesburg", "Van Horn", "Saint Denis"], load: "Saint Denis", unload: "Wallace" },
-            { id: 2, name: "LINIE II.", gap: 6, stops: ["Saint Denis", "Rhodes", "Flatneck", "Blackwater", "MacFarlane's Ranch", "Montana", "Flatneck", "Valentine", "Saint Denis"], load: "Saint Denis", unload: "MacFarlane's Ranch" },
-            { id: 3, name: "LINIE III.", gap: 5, stops: ["Saint Denis", "Van Horn", "Annesburg", "Bacchus Station", "Wallace Station", "Riggs Station", "Flatneck Station", "Rhodes"], load: "Saint Denis", unload: "Wallace Station" },
-            { id: 4, name: "LINIE IV.", gap: 7, stops: ["Saint Denis", "Rhodes", "Flatneck", "Riggs", "Blackwater", "Riggs", "Flatneck", "Saint Denis"], load: "Saint Denis", unload: "Benedict Point" }
-        ],
-        webhook: "https://discord.com/api/webhooks/1462379181290553378/7szxSP1bgAiR1diwDixyPPrXxklYWVGdLn3xZy8czqxGbqda9wtryXNV_zqJXL3PHGKO"
-    };
+    let data = { name: "", hist: 0, shift: "" };
+    const lines = [
+        { id: 1, n: "LINIE I. - HLAVNÍ OKRUH", t: 5, s: ["Saint Denis", "Emerald", "Valentine", "Flatneck", "Riggs", "Wallace", "Bacchus", "Annesburg", "Van Horn", "Saint Denis"], l: "Saint Denis", u: "Wallace" },
+        { id: 2, n: "LINIE II. - ZÁPADNÍ SPOJKA", t: 6, s: ["Saint Denis", "Rhodes", "Flatneck", "Blackwater", "MacFarlane's Ranch", "Montana", "Flatneck", "Valentine", "Saint Denis"], l: "Saint Denis", u: "MacFarlane's Ranch" },
+        { id: 3, n: "LINIE III. - SEVERNÍ SPOJ", t: 5, s: ["Saint Denis", "Van Horn", "Annesburg", "Bacchus Station", "Wallace Station", "Riggs Station", "Flatneck Station", "Rhodes"], l: "Saint Denis", u: "Wallace Station" },
+        { id: 4, n: "LINIE IV. - JIŽNÍ EKSPRES", t: 7, s: ["Saint Denis", "Rhodes", "Flatneck", "Riggs", "Blackwater", "Riggs", "Flatneck", "Saint Denis"], l: "Saint Denis", u: "Benedict Point" }
+    ];
+    let schedule = [];
 
-    let generatedShift = [];
-    let startTime = new Date(); // Simulujeme začátek teď
+    function sel(el, key, val) {
+        el.parentElement.querySelectorAll('.option-box').forEach(x => x.classList.remove('selected'));
+        el.classList.add('selected');
+        data[key] = val;
+    }
 
-    function generateFullShift() {
-        let currentTime = new Date(startTime);
-        // Generujeme 4 kola (každá linka jednou pro ukázku)
-        for (let i = 0; i < 4; i++) {
-            let line = config.lines[i];
-            let roundStops = [];
-            
-            line.stops.forEach((stop, idx) => {
-                let isCargo = (stop === line.load || stop === line.unload);
-                if (idx > 0) {
-                    currentTime = new Date(currentTime.getTime() + (line.gap * 60000));
-                    if (isCargo) currentTime = new Date(currentTime.getTime() + (3 * 60000));
-                }
-                roundStops.push({ 
-                    name: stop, 
-                    time: `${currentTime.getHours().toString().padStart(2, '0')}:${currentTime.getMinutes().toString().padStart(2, '0')}`,
-                    cargo: stop === line.load ? "NAKLÁDKA" : (stop === line.unload ? "VYKLÁDKA" : null)
-                });
+    function go(s) {
+        document.getElementById('step1').classList.add('hidden');
+        document.getElementById('step2').classList.remove('hidden');
+    }
+
+    function gen() {
+        data.hist = document.getElementById('hist').value;
+        document.getElementById('step2').classList.add('hidden');
+        document.getElementById('step3').classList.remove('hidden');
+        
+        let now = new Date();
+        let curr = new Date(now);
+        
+        for(let i=0; i<4; i++) {
+            let line = lines[i];
+            let round = { name: line.n, stops: [] };
+            line.s.forEach((st, idx) => {
+                let cargo = (st === line.l || st === line.u);
+                if(idx > 0) curr.setMinutes(curr.getMinutes() + line.t + (cargo ? 3 : 0));
+                round.stops.push({ n: st, t: curr.getHours() + ":" + curr.getMinutes().toString().padStart(2,'0'), c: st === line.l ? 'NAKLÁDKA' : (st === line.u ? 'VYKLÁDKA' : '') });
             });
-            
-            generatedShift.push({ lineName: line.name, stops: roundStops });
-            // Pauza v Saint Denis po kole (5 min)
-            currentTime = new Date(currentTime.getTime() + (5 * 60000));
+            schedule.push(round);
+            // Pauza v Saint Denis po 2. a 3. kole (5 min)
+            if(i === 1 || i === 2) curr.setMinutes(curr.getMinutes() + 5);
         }
         
-        document.getElementById('shift-end-display').innerText = `${currentTime.getHours().toString().padStart(2, '0')}:${currentTime.getMinutes().toString().padStart(2, '0')}`;
-        renderRoundButtons();
+        document.getElementById('endTime').innerText = curr.getHours() + ":" + curr.getMinutes().toString().padStart(2,'0');
+        let btns = "";
+        schedule.forEach((r, i) => btns += `<button class="gold-btn" style="padding:10px" onclick="showR(${i})">KOLO ${i+1}</button>`);
+        document.getElementById('rounds-btns').innerHTML = btns;
     }
 
-    function renderRoundButtons() {
-        let html = "";
-        generatedShift.forEach((round, idx) => {
-            html += `<div class="round-card" onclick="viewRound(${idx}, this)">KOLO ${idx + 1}</div>`;
+    function showR(i) {
+        let r = schedule[i];
+        let html = `<p style="color:#b09060; font-weight:bold; border-bottom:1px solid #444;">${r.name}</p>`;
+        r.stops.forEach(s => html += `<div class="tt-row"><span>${s.n} ${s.c ? `<span class="tag">${s.c}</span>`:''}</span><span>${s.t}</span></div>`);
+        document.getElementById('preview').innerHTML = html;
+    }
+
+    async function start() {
+        await fetch("https://discord.com/api/webhooks/1462379181290553378/7szxSP1bgAiR1diwDixyPPrXxklYWVGdLn3xZy8czqxGbqda9wtryXNV_zqJXL3PHGKO", {
+            method: 'POST', headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({content: `🚂 **${data.name}** zahájil směnu (**${data.shift}**). Historie: ${data.hist} kol.`})
         });
-        document.getElementById('rounds-list').innerHTML = html;
+        alert("Směna odstartována!");
     }
-
-    function viewRound(idx, el) {
-        document.querySelectorAll('.round-card').forEach(c => c.classList.remove('active'));
-        el.classList.add('active');
-        
-        let round = generatedShift[idx];
-        let html = `<h3>${round.lineName}</h3>`;
-        round.stops.forEach(s => {
-            html += `<div class="tt-row">
-                <span>${s.name} ${s.cargo ? `<span class="cargo-tag">[${s.cargo}]</span>` : ''}</span>
-                <span>${s.time}</span>
-            </div>`;
-        });
-        document.getElementById('tt-content').innerHTML = html;
-    }
-
-    async function startShift() {
-        const timeStr = `${new Date().getHours()}:${new Date().getMinutes().toString().padStart(2, '0')}`;
-        
-        // Odeslání na Discord
-        try {
-            await fetch(config.webhook, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content: `🚂 **Nová směna zahájena**\nStrojvůdce potvrdil plán a vyjíždí v **${timeStr}**.` })
-            });
-        } catch (e) { console.error("Discord Webhook selhal."); }
-
-        alert("Směna potvrzena! Přecházím do aktivního protokolu jízdy.");
-        // Zde se přepne na okno prvního jízdního řádu se zvuky
-    }
-
-    generateFullShift();
 </script>
 </body>
 </html>
