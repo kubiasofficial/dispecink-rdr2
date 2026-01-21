@@ -2,217 +2,157 @@
 <html lang="cs">
 <head>
 <meta charset="UTF-8">
-<title>Continental Rail Company – Archiv 1899</title>
+<title>Continental Rail Company</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
 body {
     margin: 0;
-    background: #2b2b2b;
+    min-height: 100vh;
+    background: radial-gradient(circle at top, #2b2b2b, #111);
     font-family: 'Libre Baskerville', serif;
+    color: #d8c08a;
 }
 
-/* HLAVNÍ KONTEJNER */
-.container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+/* CENTRÁLNÍ BLOK */
+.main-panel {
+    width: 520px;
+    margin: 80px auto 40px;
+    padding: 30px 30px 35px;
+    background: rgba(30, 28, 26, 0.95);
+    border: 1px solid #c7a86a;
+    box-shadow: 0 0 40px rgba(0,0,0,0.8);
 }
 
-/* KNIHA */
-.book {
-    width: 800px;
-    background: #f3e7c9;
-    padding: 60px;
-    margin-top: 60px;
-    position: relative;
-    box-shadow:
-        0 0 0 8px #3b2f1e,
-        0 20px 50px rgba(0,0,0,0.7);
-}
-
-.book::before {
-    content: "";
-    position: absolute;
-    left: -25px;
-    top: 0;
-    width: 25px;
-    height: 100%;
-    background: #2a1d12;
-    box-shadow: inset -4px 0 6px rgba(0,0,0,0.6);
-}
-
-.page {
-    display: none;
-    animation: fade 0.5s ease;
-}
-.page.active { display: block; }
-
-@keyframes fade {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-h1, h2 {
+/* NADPIS */
+.title {
     text-align: center;
-    letter-spacing: 2px;
+    letter-spacing: 3px;
+    font-size: 18px;
+    margin-bottom: 20px;
 }
 
+/* PODNADPIS */
 .subtitle {
     text-align: center;
-    font-style: italic;
-    margin-bottom: 40px;
+    font-size: 11px;
+    opacity: 0.8;
+    margin-bottom: 20px;
 }
 
 .divider {
-    border-top: 2px solid #5a4a32;
-    margin: 30px 0;
+    height: 1px;
+    background: rgba(199,168,106,0.4);
+    margin: 18px 0;
 }
 
-.text {
-    font-size: 17px;
-    line-height: 1.7;
-    text-align: justify;
-}
-
-/* OVLÁDÁNÍ KNIHY */
-.controls {
-    margin-top: 40px;
+/* SEZNAM */
+.list {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 10px;
 }
 
-button {
-    background: none;
-    border: 1px solid #5a4a32;
-    padding: 10px 20px;
+.item {
+    padding: 10px 14px;
+    border: 1px solid rgba(199,168,106,0.35);
+    cursor: pointer;
+    font-size: 13px;
+    transition: 0.2s;
+}
+
+.item:hover {
+    background: rgba(199,168,106,0.15);
+}
+
+.item.active {
+    background: #b89a63;
+    color: #1a140c;
+}
+
+/* TLAČÍTKO */
+.action {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+}
+
+.action button {
+    padding: 10px 30px;
+    border: 1px solid #c7a86a;
+    background: #b89a63;
+    color: #1a140c;
     font-family: inherit;
+    letter-spacing: 1px;
     cursor: pointer;
 }
 
-button:hover {
-    background: #5a4a32;
-    color: #f3e7c9;
+.action button:hover {
+    background: #d1b57c;
 }
 
-/* FUNKCE POD KNIHOU */
+/* SEKCE POD TÍM – DALŠÍ FUNKCE */
 .functions {
-    width: 800px;
-    margin: 40px 0 80px;
-    padding: 30px;
-    background: #1f1f1f;
-    border: 1px solid #5a4a32;
-    color: #f3e7c9;
+    width: 520px;
+    margin: 0 auto 80px;
+    padding: 25px;
+    background: rgba(20,18,16,0.9);
+    border: 1px solid rgba(199,168,106,0.4);
     text-align: center;
 }
 
 .functions h3 {
-    margin-bottom: 20px;
-    letter-spacing: 1px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    letter-spacing: 2px;
 }
 
-.func-btn {
-    margin: 10px;
-    padding: 12px 20px;
-    border: 1px solid #5a4a32;
+.functions button {
+    margin: 6px;
+    padding: 8px 18px;
     background: none;
-    color: #f3e7c9;
+    border: 1px solid rgba(199,168,106,0.5);
+    color: #d8c08a;
     font-family: inherit;
     cursor: pointer;
 }
 
-.func-btn:hover {
-    background: #5a4a32;
-    color: #1f1f1f;
+.functions button:hover {
+    background: rgba(199,168,106,0.15);
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<!-- HLAVNÍ PANEL -->
+<div class="main-panel">
+    <div class="title">CONTINENTAL RAIL COMPANY</div>
 
-    <!-- 📖 KNIHA -->
-    <div class="book">
+    <div class="divider"></div>
 
-        <div class="page active">
-            <h1>Continental Rail Company</h1>
-            <div class="subtitle">Archiv – 1899</div>
-            <div class="divider"></div>
-            <div class="text">
-                Oficiální záznamy osob spojených se společností
-                Continental Rail Company.
-            </div>
-        </div>
+    <div class="subtitle">SEZNAM STROJVEDOUCÍCH VE SLUŽBĚ</div>
 
-        <div class="page">
-            <h2>Joshua Thorne</h2>
-            <div class="divider"></div>
-            <div class="text">Zkušený muž železnice...</div>
-        </div>
-
-        <div class="page">
-            <h2>Henry Brown</h2>
-            <div class="divider"></div>
-            <div class="text">Správce vozového parku...</div>
-        </div>
-
-        <div class="page">
-            <h2>Elizabeth Brown</h2>
-            <div class="divider"></div>
-            <div class="text">Administrativa společnosti...</div>
-        </div>
-
-        <div class="page">
-            <h2>Nicholas Carter</h2>
-            <div class="divider"></div>
-            <div class="text">Muž s minulostí...</div>
-        </div>
-
-        <div class="controls">
-            <button onclick="prevPage()">◀ Předchozí</button>
-            <button onclick="nextPage()">Další ▶</button>
-        </div>
+    <div class="list">
+        <div class="item active">§ ELIZABETH BROWN</div>
+        <div class="item">§ JOSHUA THORNE</div>
+        <div class="item">§ HENRY BROWN</div>
+        <div class="item">§ NICHOLAS CARTER</div>
     </div>
 
-    <!-- 🔧 FUNKCE POD KNIHOU -->
-    <div class="functions">
-        <h3>Firemní funkce</h3>
-        <button class="func-btn">Dispečink</button>
-        <button class="func-btn">Výkazy z jízd</button>
-        <button class="func-btn">Jízdní řády</button>
-        <button class="func-btn">Zaměstnanci</button>
+    <div class="action">
+        <button>POKRAČOVAT</button>
     </div>
-
 </div>
 
-<script>
-let currentPage = 0;
-const pages = document.querySelectorAll('.page');
+<!-- DALŠÍ FUNKCE POD TÍM -->
+<div class="functions">
+    <h3>DALŠÍ FUNKCE</h3>
+    <button>Dispečink</button>
+    <button>Výkazy</button>
 
-function showPage(i) {
-    pages.forEach(p => p.classList.remove('active'));
-    pages[i].classList.add('active');
-}
 
-function nextPage() {
-    if (currentPage < pages.length - 1) {
-        currentPage++;
-        showPage(currentPage);
-    }
-}
-
-function prevPage() {
-    if (currentPage > 0) {
-        currentPage--;
-        showPage(currentPage);
-    }
-}
-</script>
-
-</body>
-</html>
 
 
 
