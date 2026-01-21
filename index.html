@@ -2,97 +2,96 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
+    <title>Continental Rail Company - Služební kniha</title>
     <style>
         body { background-color: #1e1c1a; color: #d2c1ae; font-family: "Courier New", Courier, monospace; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .log-book { background-color: #2d2a27; border: 1px solid #b09060; padding: 40px; width: 600px; box-shadow: 0 0 30px rgba(0,0,0,0.7); text-align: center; }
-        h1 { color: #b09060; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 30px; }
-        h2 { color: #b09060; font-size: 1.2rem; margin-bottom: 25px; letter-spacing: 2px; }
+        .log-book { background-color: #2d2a27; border: 1px solid #b09060; padding: 40px; width: 650px; box-shadow: 0 0 30px rgba(0,0,0,0.7); text-align: center; position: relative; }
+        h1 { color: #b09060; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 30px; font-size: 1.6rem; }
+        h2 { color: #b09060; font-size: 1.1rem; margin-bottom: 25px; letter-spacing: 2px; border-top: 1px solid #4d453d; padding-top: 20px; }
         
-        .section { margin-bottom: 30px; }
-        label { display: block; margin-bottom: 10px; font-size: 0.8rem; color: #a08050; text-transform: uppercase; }
+        .label-text { display: block; margin-bottom: 10px; font-size: 0.75rem; color: #a08050; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* Historie kol */
+        /* SEZNAM JMEN (KROK 1) */
+        .list-container { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        .option-box { border: 1px solid #4d453d; padding: 15px; cursor: pointer; text-transform: uppercase; transition: 0.2s; text-align: left; font-size: 0.9rem; }
+        .option-box:hover { border-color: #b09060; background: #333; }
+        .option-box.selected { background-color: #b09060; color: #1a1816; font-weight: bold; border-color: #b09060; }
+
+        /* HISTORIE A SMĚNA (KROK 2) */
+        .hidden { display: none; }
+        
         input[type="number"] {
-            width: 80%;
-            padding: 12px;
-            background: #1a1816;
-            color: #d2c1ae;
-            border: 1px solid #4d453d;
-            font-family: "Courier New";
-            font-size: 1.5rem;
-            text-align: center;
-            outline: none;
+            width: 100%; padding: 15px; background: #141210; color: #d2c1ae; border: 1px solid #4d453d;
+            font-family: "Courier New"; font-size: 1.8rem; text-align: center; outline: none; margin-bottom: 25px; box-sizing: border-box;
         }
 
-        /* Tlačítka směn pod sebou */
-        .shift-list { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
-        .shift-option { 
-            border: 1px solid #4d453d; 
-            padding: 15px; 
-            cursor: pointer; 
-            text-transform: uppercase; 
-            transition: 0.2s;
-            font-size: 0.9rem;
-        }
-        .shift-option:hover { border-color: #b09060; background: #333; }
-        .shift-option.selected { background-color: #b09060; color: #1a1816; font-weight: bold; }
-        .shift-option::before { content: "§ "; }
-
-        #next-step-btn { 
-            margin-top: 30px; 
-            background: #b09060; 
-            color: #1a1816; 
-            border: none; 
-            padding: 15px 40px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            text-transform: uppercase; 
-            letter-spacing: 2px;
-            display: none; /* Ukáže se až po výběru směny */
-            width: 100%;
+        .gold-btn { 
+            margin-top: 20px; background: #b09060; color: #1a1816; border: none; padding: 18px; 
+            font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; width: 100%; font-family: "Courier New";
         }
     </style>
 </head>
 <body>
 
     <div class="log-book">
-        <h1>Continental Rail Company</h1>
-        <h2>[ VOLBA SLUŽBY ]</h2>
+        <h1>CONTINENTAL RAIL COMPANY</h1>
 
-        <div class="section">
-            <label>Počet kol před začátkem směny (Historie):</label>
-            <input type="number" id="history-val" value="0">
-        </div>
-
-        <div class="section">
-            <label>Vyberte typ služby:</label>
-            <div class="shift-list">
-                <div class="shift-option" onclick="selectShift(this, 'Ranní (05:00 - 15:00)')">Ranní (05:00 - 15:00)</div>
-                <div class="shift-option" onclick="selectShift(this, 'Odpolední (15:00 - 22:00)')">Odpolední (15:00 - 22:00)</div>
-                <div class="shift-option" onclick="selectShift(this, 'Noční (22:00 - 05:00)')">Noční (22:00 - 05:00)</div>
+        <div id="step1">
+            <span class="label-text">Seznam strojvůdců ve službě:</span>
+            <div class="list-container">
+                <div class="option-box" onclick="selectName(this, 'Elizabeth Brown')">§ Elizabeth Brown</div>
+                <div class="option-box" onclick="selectName(this, 'Joshue Thorne')">§ Joshue Thorne</div>
+                <div class="option-box" onclick="selectName(this, 'Henry Brown')">§ Henry Brown</div>
+                <div class="option-box" onclick="selectName(this, 'Nicholas Carter')">§ Nicholas Carter</div>
             </div>
+            <button class="gold-btn" onclick="showStep2()">Pokračovat</button>
         </div>
 
-        <button id="next-step-btn" onclick="goToPlanning()">Pokračovat k plánu telegramů</button>
+        <div id="step2" class="hidden">
+            <h2>[ VOLBA SLUŽBY ]</h2>
+            
+            <span class="label-text">Počet kol před začátkem směny (Historie):</span>
+            <input type="number" id="history-input" value="0">
+
+            <span class="label-text">Vyberte typ služby:</span>
+            <div class="list-container">
+                <div class="option-box" onclick="selectShift(this, 'Ranní')">§ RANNÍ (05:00 - 15:00)</div>
+                <div class="option-box" onclick="selectShift(this, 'Odpolední')">§ ODPOLEDNÍ (15:00 - 22:00)</div>
+                <div class="option-box" onclick="selectShift(this, 'Noční')">§ NOČNÍ (22:00 - 05:00)</div>
+            </div>
+
+            <button class="gold-btn" onclick="confirmEverything()">Pokračovat k plánu telegramů</button>
+        </div>
     </div>
 
     <script>
-        let selectedShift = "";
+        let session = { name: "", history: 0, shift: "" };
 
-        function selectShift(element, shiftName) {
-            // Odznačit ostatní
-            document.querySelectorAll('.shift-option').forEach(opt => opt.classList.remove('selected'));
-            // Označit vybrané
-            element.classList.add('selected');
-            selectedShift = shiftName;
-            // Ukázat tlačítko pro pokračování
-            document.getElementById('next-step-btn').style.display = 'block';
+        function selectName(el, name) {
+            document.querySelectorAll('#step1 .option-box').forEach(opt => opt.classList.remove('selected'));
+            el.classList.add('selected');
+            session.name = name;
         }
 
-        function goToPlanning() {
-            const history = document.getElementById('history-val').value;
-            console.log("Směna: " + selectedShift + ", Historie: " + history);
-            // Zde v dalším kroku vygenerujeme ty 4 karty
+        function showStep2() {
+            if (!session.name) { alert("Nejdříve vyberte své jméno!"); return; }
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.remove('hidden');
+        }
+
+        function selectShift(el, shift) {
+            document.querySelectorAll('#step2 .option-box').forEach(opt => opt.classList.remove('selected'));
+            el.classList.add('selected');
+            session.shift = shift;
+        }
+
+        function confirmEverything() {
+            session.history = document.getElementById('history-input').value;
+            if (!session.shift) { alert("Vyberte typ směny!"); return; }
+            
+            console.log("Hotovo:", session);
+            alert("Nyní přejdeme k plánování telegramů pro 4 linky.");
+            // Tady budeme pokračovat na Krok 3
         }
     </script>
 
