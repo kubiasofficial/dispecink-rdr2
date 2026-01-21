@@ -2,100 +2,54 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <title>Continental Rail Company - Služební záznam</title>
     <style>
-        body {
-            background-color: #1e1c1a;
+        body { background-color: #1e1c1a; color: #d2c1ae; font-family: "Courier New", Courier, monospace; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .log-book { background-color: #2d2a27; border: 1px solid #b09060; padding: 40px; width: 600px; box-shadow: 0 0 30px rgba(0,0,0,0.7); text-align: center; }
+        h1 { color: #b09060; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 30px; }
+        h2 { color: #b09060; font-size: 1.2rem; margin-bottom: 25px; letter-spacing: 2px; }
+        
+        .section { margin-bottom: 30px; }
+        label { display: block; margin-bottom: 10px; font-size: 0.8rem; color: #a08050; text-transform: uppercase; }
+
+        /* Historie kol */
+        input[type="number"] {
+            width: 80%;
+            padding: 12px;
+            background: #1a1816;
             color: #d2c1ae;
-            font-family: "Courier New", Courier, monospace;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        .log-book {
-            background-color: #2d2a27;
-            border: 2px solid #b09060;
-            padding: 50px;
-            width: 550px;
-            box-shadow: 0 0 30px rgba(0,0,0,0.7);
-            text-align: center;
-        }
-
-        h1 {
-            color: #b09060;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            border-bottom: 1px solid #b09060;
-            padding-bottom: 10px;
-            margin-bottom: 30px;
-            font-size: 1.5rem;
-        }
-
-        .employee-list {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-bottom: 30px;
-            text-align: left;
-        }
-
-        .employee-option {
             border: 1px solid #4d453d;
-            padding: 15px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            display: flex;
-            align-items: center;
+            font-family: "Courier New";
+            font-size: 1.5rem;
+            text-align: center;
+            outline: none;
         }
 
-        .employee-option:hover {
-            background-color: #3d3a37;
-            border-color: #b09060;
-        }
-
-        .employee-option.selected {
-            background-color: #b09060;
-            color: #1a1816;
-            font-weight: bold;
-        }
-
-        .employee-option::before {
-            content: "§ ";
-            margin-right: 10px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 20px;
-            text-transform: uppercase;
+        /* Tlačítka směn pod sebou */
+        .shift-list { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+        .shift-option { 
+            border: 1px solid #4d453d; 
+            padding: 15px; 
+            cursor: pointer; 
+            text-transform: uppercase; 
+            transition: 0.2s;
             font-size: 0.9rem;
-            color: #a08050;
-            border-bottom: 1px solid #4d453d;
-            padding-bottom: 5px;
         }
+        .shift-option:hover { border-color: #b09060; background: #333; }
+        .shift-option.selected { background-color: #b09060; color: #1a1816; font-weight: bold; }
+        .shift-option::before { content: "§ "; }
 
-        #continue-btn {
-            background-color: #b09060;
-            color: #1a1816;
-            border: none;
-            padding: 15px 40px;
-            font-family: "Courier New", Courier, monospace;
-            font-weight: bold;
-            text-transform: uppercase;
-            cursor: pointer;
+        #next-step-btn { 
+            margin-top: 30px; 
+            background: #b09060; 
+            color: #1a1816; 
+            border: none; 
+            padding: 15px 40px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            text-transform: uppercase; 
             letter-spacing: 2px;
-            opacity: 0.5;
-            pointer-events: none;
-        }
-
-        #continue-btn.active {
-            opacity: 1;
-            pointer-events: auto;
+            display: none; /* Ukáže se až po výběru směny */
+            width: 100%;
         }
     </style>
 </head>
@@ -103,39 +57,42 @@
 
     <div class="log-book">
         <h1>Continental Rail Company</h1>
-        
-        <label>Seznam strojvůdců ve službě:</label>
+        <h2>[ VOLBA SLUŽBY ]</h2>
 
-        <div class="employee-list" id="employee-list">
-            <div class="employee-option" onclick="selectEmployee(this, 'Elizabeth Brown')">Elizabeth Brown</div>
-            <div class="employee-option" onclick="selectEmployee(this, 'Joshue Thorne')">Joshue Thorne</div>
-            <div class="employee-option" onclick="selectEmployee(this, 'Henry Brown')">Henry Brown</div>
-            <div class="employee-option" onclick="selectEmployee(this, 'Nicholas Carter')">Nicholas Carter</div>
+        <div class="section">
+            <label>Počet kol před začátkem směny (Historie):</label>
+            <input type="number" id="history-val" value="0">
         </div>
 
-        <button id="continue-btn" onclick="confirmStep1()">Pokračovat</button>
+        <div class="section">
+            <label>Vyberte typ služby:</label>
+            <div class="shift-list">
+                <div class="shift-option" onclick="selectShift(this, 'Ranní (05:00 - 15:00)')">Ranní (05:00 - 15:00)</div>
+                <div class="shift-option" onclick="selectShift(this, 'Odpolední (15:00 - 22:00)')">Odpolední (15:00 - 22:00)</div>
+                <div class="shift-option" onclick="selectShift(this, 'Noční (22:00 - 05:00)')">Noční (22:00 - 05:00)</div>
+            </div>
+        </div>
+
+        <button id="next-step-btn" onclick="goToPlanning()">Pokračovat k plánu telegramů</button>
     </div>
 
     <script>
-        let selectedName = "";
+        let selectedShift = "";
 
-        function selectEmployee(element, name) {
-            // Zrušit označení u ostatních
-            document.querySelectorAll('.employee-option').forEach(opt => {
-                opt.classList.remove('selected');
-            });
-            
+        function selectShift(element, shiftName) {
+            // Odznačit ostatní
+            document.querySelectorAll('.shift-option').forEach(opt => opt.classList.remove('selected'));
             // Označit vybrané
             element.classList.add('selected');
-            selectedName = name;
-            
-            // Aktivovat tlačítko
-            document.getElementById('continue-btn').classList.add('active');
+            selectedShift = shiftName;
+            // Ukázat tlačítko pro pokračování
+            document.getElementById('next-step-btn').style.display = 'block';
         }
 
-        function confirmStep1() {
-            console.log("Strojvůdce potvrzen: " + selectedName);
-            // Tady budeme pokračovat na další krok
+        function goToPlanning() {
+            const history = document.getElementById('history-val').value;
+            console.log("Směna: " + selectedShift + ", Historie: " + history);
+            // Zde v dalším kroku vygenerujeme ty 4 karty
         }
     </script>
 
