@@ -2,7 +2,7 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <title>Dispečink v1.39 - Blackwater Logistics</title>
+    <title>Dispečink v1.40 - CRC</title>
     <style>
         :root {
             --bg-color: #0d0d0d; --card-bg: rgba(25, 25, 25, 0.98);
@@ -18,31 +18,13 @@
 
         h2 { color: var(--accent); text-align: center; border-bottom: 2px solid #8b0000; padding-bottom: 15px; text-transform: uppercase; letter-spacing: 5px; margin-top: 0; }
         
-        #update-modal {
-            display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.9); backdrop-filter: blur(5px);
-        }
-        .modal-content {
-            background: #1a1a1a; margin: 10% auto; padding: 30px; border: 1px solid var(--accent);
-            width: 500px; border-radius: 12px; position: relative; box-shadow: 0 0 30px rgba(192, 160, 96, 0.2);
-        }
-        .close-modal { position: absolute; right: 20px; top: 15px; color: #888; font-size: 28px; cursor: pointer; }
-
-        #notice-board, #management-board { margin-top: 15px; padding: 15px; border-radius: 8px; text-align: center; }
-        #notice-board { border: 1px dashed var(--danger); background: rgba(255, 0, 0, 0.05); }
-        #management-board { border: 1px solid var(--accent); background: rgba(192, 160, 96, 0.05); }
-
-        .blinking-title { animation: blinker 2s linear infinite; font-weight: 900; color: var(--danger); margin: 0 0 8px 0; letter-spacing: 2px; text-transform: uppercase; }
-        .management-title { font-weight: 900; color: var(--accent); margin: 0 0 8px 0; letter-spacing: 2px; text-transform: uppercase; }
-        @keyframes blinker { 50% { opacity: 0.3; } }
-
         #navigator { padding: 25px; border-radius: 12px; margin-bottom: 25px; text-align: center; border: 1px solid var(--border); position: relative; }
         .state-station { background: linear-gradient(135deg, #162e4d 0%, #08111d 100%); border-color: var(--info) !important; }
         .state-travel { background: linear-gradient(135deg, #4d2b00 0%, #1a0f00 100%); border-color: #ffa500 !important; }
         
         #nav-timer-container { font-size: 4.5em; font-weight: 800; font-family: 'Courier New', monospace; line-height: 1; }
         .gvd-container { width: 100%; height: 10px; background: #000; border-radius: 5px; margin: 20px 0 10px 0; border: 1px solid #333; overflow: hidden; }
-        #gvd-fill { width: 0%; height: 100%; background: linear-gradient(to right, #2196F3, #44ccff); transition: 0.5s; }
+        #gvd-fill { width: 0%; height: 100%; background: linear-gradient(to right, #c0a060, #8b0000); transition: 0.5s; }
 
         .info-bar { display: flex; justify-content: space-around; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #333; }
         .info-item { text-align: center; }
@@ -58,266 +40,190 @@
         label { font-size: 0.75em; color: var(--accent); margin-bottom: 5px; display: block; }
         select, input { background: #222; border: 1px solid var(--border); color: #fff; padding: 10px; border-radius: 6px; width: 100%; box-sizing: border-box; }
         
-        .tg-section { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .tg-box { background: rgba(0,0,0,0.3); border: 1px solid var(--border); padding: 10px; border-radius: 8px; max-height: 120px; overflow-y: auto; font-size: 0.8em; }
-        .list { margin-top: 20px; border-top: 1px solid var(--border); padding-top: 15px; font-family: monospace; max-height: 200px; overflow-y: auto; }
-        .item-row { display: flex; justify-content: space-between; padding: 6px 10px; border-bottom: 1px solid #222; opacity: 0.5; }
-        .active-row { opacity: 1; color: var(--accent); background: rgba(192, 160, 96, 0.1); font-weight: bold; }
+        .list { margin-top: 20px; border-top: 1px solid var(--border); padding-top: 15px; font-family: monospace; max-height: 250px; overflow-y: auto; }
+        .item-row { display: flex; justify-content: space-between; padding: 8px 10px; border-bottom: 1px solid #222; opacity: 0.4; }
+        .active-row { opacity: 1; color: var(--accent); background: rgba(192, 160, 96, 0.1); font-weight: bold; border-left: 3px solid var(--accent); }
+        .tag { color: var(--accent); font-size: 0.7em; margin-left: 5px; border: 1px solid var(--accent); padding: 1px 4px; }
     </style>
 </head>
-<body onload="checkUpdate()">
-
-<div id="update-modal">
-    <div class="modal-content">
-        <span class="close-modal" onclick="closeUpdate()">&times;</span>
-        <h3 style="color:var(--accent); margin-top:0;">🚀 AKTUALIZACE v1.39</h3>
-        <ul style="font-size: 0.9em; line-height: 1.6; padding-left: 20px;">
-            <li><b>📢 Blackwater Dispatch:</b> Automatické hlášení příjezdů pro stanici Blackwater na samostatný webhook.</li>
-            <li><b>🧭 Detekce směru:</b> Inteligentní rozpoznání, zda vlak v BW jede do Saint Denis nebo k jihu.</li>
-            <li><b>⚖️ Stabilizace:</b> Oprava logování a synchronizace všech tří webhooků.</li>
-        </ul>
-        <button class="btn btn-main" onclick="closeUpdate()">ROZUMÍM</button>
-    </div>
-</div>
+<body>
 
 <div class="card">
-    <h2>🚂 DISPEČINK v1.39</h2>
+    <h2>🚂 DISPEČINK CRC v1.40</h2>
 
     <div id="setup-mode" class="active-mode">
         <label>VÝBĚR TRASY:</label>
-        <select id="routeSelect" onchange="updateStations()" style="margin-bottom: 15px;">
-            <option value="hlavni">1. HLAVNÍ OKRUH</option>
-            <option value="zapadni">2. ZÁPADNÍ SPOJKA</option>
-            <option value="vychodni">3. VÝCHODNÍ DRÁHA</option>
-            <option value="jizni">4. JIŽNÍ CESTA</option>
+        <select id="routeSelect" style="margin-bottom: 15px;">
+            <option value="l1">1. HLAVNÍ OKRUH (Interval 5m)</option>
+            <option value="l2">2. ZÁPADNÍ SPOJKA (Interval 6m)</option>
+            <option value="l3">3. VÝCHODNÍ DRÁHA (Interval 5m)</option>
+            <option value="l4">4. JIŽNÍ CESTA (Interval 7m)</option>
         </select>
 
         <div class="grid-config">
             <div><label>START:</label><input type="time" id="startTime" value="12:00"></div>
-            <div><label>KOL DNES:</label><input type="number" id="lapCount" value="1" min="1"></div>
+            <div><label>KOL DNES:</label><input type="number" id="lapCount" value="4" min="1"></div>
             <div><label>HISTORIE (CELKEM):</label><input type="number" id="prevTotal" value="0" min="0"></div>
-            <div><label>PAUZA:</label><input type="number" id="pauseTime" value="5"></div>
-        </div>
-
-        <div class="tg-section">
-            <div id="tgIn" class="tg-box"></div>
-            <div id="tgOut" class="tg-box"></div>
+            <div><label>PAUZA SD (min):</label><input type="number" id="pauseTime" value="5"></div>
         </div>
 
         <button class="btn btn-main" onclick="generovat()">⚙️ GENEROVAT JÍZDNÍ ŘÁD</button>
-
-        <div id="notice-board">
-            <h4 class="blinking-title">⚠️ OMEZENÍ A NAŘÍZENÍ ⚠️</h4>
-            <div id="notice-content" style="font-family: monospace; font-size: 0.85em; color: #bbb;">Ve městech je povinné dodržovat rychlost 20 mph.</div>
-        </div>
-
-        <div id="management-board">
-            <h4 class="management-title">📜 VZKAZY OD VEDENÍ</h4>
-            <div id="management-content" style="font-family: 'Segoe UI', serif; font-size: 0.9em; color: #ccc; font-style: italic;">
-                Dbejte zvýšené opatrnosti při průjezdu stanicemi. 
-            </div>
-        </div>
-
-        <button id="startBtn" class="btn btn-discord" style="display:none;" onclick="startDrive()">🚀 ODESLAT NA DISCORD & ODJET</button>
+        <button id="startBtn" class="btn btn-discord" style="display:none;" onclick="startDrive()">🚀 POTVRDIT A ODJET</button>
         <div id="preview-list" class="list"></div>
     </div>
 
     <div id="drive-mode">
         <div class="info-bar">
             <div class="info-item"><span class="info-label">Dochvilnost</span><span id="hud-delay" class="info-val">VČAS</span></div>
-            <div class="info-item"><span class="info-label">Zbývá zastávek</span><span id="hud-remaining" class="info-val">--</span></div>
+            <div class="info-item"><span class="info-label">Kolo</span><span id="hud-lap" class="info-val">1</span></div>
             <div class="info-item"><span class="info-label">Tržba</span><span id="hud-cash" class="info-val">0 $</span></div>
         </div>
 
         <div id="navigator">
             <div style="display:flex; justify-content: space-between; font-weight: bold; color: var(--accent);">
-                <span id="hud-planned-label">PŘÍJEZD:</span><span id="hud-planned-time">--:--</span>
+                <span>PLÁNOVANÝ ČAS:</span><span id="hud-planned-time">--:--</span>
             </div>
             <div id="nav-main" style="font-size: 2em; font-weight: 900; margin: 10px 0;">STATION ➔ STATION</div>
             <div id="nav-timer-container">0:00</div>
             <div class="gvd-container"><div id="gvd-fill"></div></div>
-            <button id="confirmBtn" class="btn btn-confirm" onclick="handleAction()">POTVRDIT PŘÍJEZD</button>
+            <button id="confirmBtn" class="btn btn-confirm" onclick="handleAction()">POTVRDIT PŘÍJEZD / ODJEZD</button>
         </div>
         <div id="active-list" class="list"></div>
     </div>
 
     <div id="report-mode" style="text-align: center;">
         <h3 style="color:var(--success)">✅ SMĚNA DOKONČENA</h3>
-        <div id="final-stats" style="background:rgba(0,0,0,0.3); padding:20px; border-radius:8px; margin-bottom:20px; text-align:left; line-height:2.2;"></div>
-        <button class="btn btn-main" onclick="resetApp()">🔄 NOVÁ SMĚNA</button>
+        <div id="final-stats" style="background:rgba(0,0,0,0.3); padding:20px; border-radius:8px; margin-bottom:20px; text-align:left;"></div>
+        <button class="btn btn-main" onclick="location.reload()">🔄 NOVÁ SMĚNA</button>
     </div>
 </div>
 
 <script>
-    const VERSION = "1.39";
-    // TŘI SAMOSTATNÉ WEBHOOKY
     const WEBHOOK_LOG = "https://discord.com/api/webhooks/1462379181290553378/7szxSP1bgAiR1diwDixyPPrXxklYWVGdLn3xZy8czqxGbqda9wtryXNV_zqJXL3PHGKO";
-    const WEBHOOK_RAD = "https://discord.com/api/webhooks/1462391755864277033/mQ1n6EsyC-yEuEc7hZTYsm8Jt9VjnUGr-jPVM2qjvVSSkisoS2Cpl1DSi1Oe7lUnBd6J";
-    const WEBHOOK_BW = "https://discord.com/api/webhooks/1463245037834862616/M_myizEOqBJjE84_5MKqNQdRlY4S1P6EHBA3JnYxOw2mdYYn0kt609sc8MIz1v3e4PkV";
     
+    // Definice linek dle tvého zadání
     const dataTras = {
-        hlavni: { nazev: "1. HLAVNÍ OKRUH", zastavky: [{n: "Saint Denis", d: 3}, {n: "Emerald", d: 4}, {n: "Valentine", d: 3}, {n: "Flatneck", d: 3}, {n: "Riggs", d: 3}, {n: "Wallace", d: 5}, {n: "Bacchus", d: 5}, {n: "Annesburg", d: 2.5}, {n: "Van Horn", d: 4}, {n: "Saint Denis (CÍL)", d: 0}]},
-        zapadni: { nazev: "2. ZÁPADNÍ SPOJKA", zastavky: [{n: "Saint Denis", d: 3}, {n: "Rhodes", d: 5}, {n: "Flatneck", d: 4}, {n: "Blackwater", d: 4.5}, {n: "MacFarlane", d: 2}, {n: "Montana", d: 3}, {n: "Flatneck ", d: 2.5}, {n: "Valentine", d: 4.5}, {n: "Saint Denis (CÍL)", d: 0}]},
-        vychodni: { nazev: "3. VÝCHODNÍ DRÁHA", zastavky: [{n: "Saint Denis", d: 3}, {n: "Van Horn", d: 2}, {n: "Annesburg", d: 4.5}, {n: "Bacchus", d: 4}, {n: "Wallace", d: 2.5}, {n: "Riggs", d: 2.5}, {n: "Flatneck", d: 3}, {n: "Rhodes", d: 3}, {n: "Saint Denis (CÍL)", d: 0}]},
-        jizni: { nazev: "4. JIŽNÍ CESTA", zastavky: [{n: "Saint Denis", d: 4.5}, {n: "Valentine", d: 2.5}, {n: "Flatneck", d: 3}, {n: "Blackwater", d: 4}, {n: "MacFarlane", d: 4}, {n: "Armadillo", d: 2}, {n: "Mercer", d: 6}, {n: "Benedict", d: 3}, {n: "Mercer ", d: 2}, {n: "Armadillo ", d: 4}, {n: "MacFarlane ", d: 4}, {n: "Blackwater ", d: 3}, {n: "Flatneck ", d: 2.5}, {n: "Valentine ", d: 4.5}, {n: "Saint Denis (CÍL)", d: 0}]}
+        l1: { n: "1. HLAVNÍ OKRUH", i: 5, s: ["Saint Denis", "Emerald", "Valentine", "Flatneck", "Riggs", "Wallace", "Bacchus", "Annesburg", "Van Horn", "Saint Denis"], l: "Saint Denis", u: "Wallace" },
+        l2: { n: "2. ZÁPADNÍ SPOJKA", i: 6, s: ["Saint Denis", "Rhodes", "Flatneck", "Blackwater", "MacFarlane's Ranch", "Montana", "Flatneck", "Valentine", "Saint Denis"], l: "Saint Denis", u: "MacFarlane's Ranch" },
+        l3: { n: "3. VÝCHODNÍ DRÁHA", i: 5, s: ["Saint Denis", "Van Horn", "Annesburg", "Bacchus Station", "Wallace Station", "Riggs Station", "Flatneck Station", "Rhodes"], l: "Saint Denis", u: "Wallace Station" },
+        l4: { n: "4. JIŽNÍ CESTA", i: 7, s: ["Saint Denis", "Rhodes", "Flatneck", "Riggs", "Blackwater", "Riggs", "Flatneck", "Saint Denis"], l: "Saint Denis", u: "Benedict Point" }
     };
 
-    let state = { delay: 0, tickets: 0, icName: "", navBody: [], currentIndex: 0, interval: null, smenaData: [], routeName: "", previousTotal: 0 };
-
-    function checkUpdate() {
-        if (localStorage.getItem('icName')) state.icName = localStorage.getItem('icName');
-        if (localStorage.getItem('prevTotal')) document.getElementById('prevTotal').value = localStorage.getItem('prevTotal');
-        if (localStorage.getItem('lastVersion') !== VERSION) { document.getElementById('update-modal').style.display = "block"; }
-        updateStations();
-    }
-
-    function closeUpdate() { localStorage.setItem('lastVersion', VERSION); document.getElementById('update-modal').style.display = "none"; }
-
-    function updateStations() {
-        const route = dataTras[document.getElementById('routeSelect').value];
-        const inC = document.getElementById('tgIn'); const outC = document.getElementById('tgOut');
-        inC.innerHTML = "<b>📥 NAKLÁDKA</b><br>"; outC.innerHTML = "<b>📤 VYKLÁDKA</b><br>";
-        route.zastavky.forEach(s => {
-            if(!s.n.includes("(CÍL)")) {
-                inC.innerHTML += `<label><input type="checkbox" class="check-in" value="${s.n}"> ${s.n}</label>`;
-                outC.innerHTML += `<label><input type="checkbox" class="check-out" value="${s.n}"> ${s.n}</label>`;
-            }
-        });
-    }
+    let state = { tickets: 0, icName: "", navBody: [], currentIndex: 0, interval: null, smenaData: [], routeName: "" };
 
     function generovat() {
         state.navBody = []; state.smenaData = [];
-        const routeKey = document.getElementById('routeSelect').value;
-        state.routeName = dataTras[routeKey].nazev;
+        const rKey = document.getElementById('routeSelect').value;
+        const r = dataTras[rKey];
+        state.routeName = r.n;
         const laps = parseInt(document.getElementById('lapCount').value);
         const pause = parseInt(document.getElementById('pauseTime').value);
-        const startStr = document.getElementById('startTime').value.split(':');
-        let curMin = parseInt(startStr[0]) * 60 + parseInt(startStr[1]);
-        const inS = Array.from(document.querySelectorAll('.check-in:checked')).map(cb => cb.value);
-        const outS = Array.from(document.querySelectorAll('.check-out:checked')).map(cb => cb.value);
+        const startParts = document.getElementById('startTime').value.split(':');
+        let curMin = parseInt(startParts[0]) * 60 + parseInt(startParts[1]);
 
         for (let l = 1; l <= laps; l++) {
             let lapDesc = "";
-            dataTras[routeKey].zastavky.forEach((s, i) => {
-                let bonus = (inS.includes(s.n.trim()) ? 1.5 : 0) + (outS.includes(s.n.trim()) ? 1.5 : 0);
-                let arrival = curMin + (i > 0 ? dataTras[routeKey].zastavky[i-1].d : 0);
-                if (i > 0) state.navBody.push({ type: 'travel', from: dataTras[routeKey].zastavky[i-1].n, to: s.n, start: curMin, end: arrival });
-                curMin = arrival + bonus;
-                let telegramTag = (inS.includes(s.n.trim()) && outS.includes(s.n.trim())) ? " [📥📤 POŠTA]" : inS.includes(s.n.trim()) ? " [📥 NAKLÁDKA]" : outS.includes(s.n.trim()) ? " [📤 VYKLÁDKA]" : "";
-                lapDesc += `\`${formatTime(curMin)}\` **${s.n}**${telegramTag}\n`;
-                state.navBody.push({ type: 'station', name: s.n, start: arrival, end: curMin, stationIndex: i });
+            r.s.forEach((st, idx) => {
+                let cargo = (st === r.l || st === r.u);
+                if (idx > 0) {
+                    curMin += r.i; // Přidání intervalu přejezdu
+                    state.navBody.push({ type: 'travel', from: r.s[idx-1], to: st, end: curMin });
+                }
+                
+                let arrival = curMin;
+                if (cargo) curMin += 3; // Automatické 3 minuty na telegram
+
+                state.navBody.push({ type: 'station', name: st, end: curMin, lap: l, cargo: st === r.l ? "📥" : (st === r.u ? "📤" : "") });
+                lapDesc += `\`${formatTime(curMin)}\` **${st}** ${st === r.l ? "[📥 NAKLÁDKA]" : (st === r.u ? "[📤 VYKLÁDKA]" : "")}\n`;
             });
             state.smenaData.push({ title: `${l}. KOLO`, desc: lapDesc });
-            if (l < laps) { state.navBody.push({ type: 'pause', start: curMin, end: curMin + pause }); curMin += pause; }
+            if (l < laps) { 
+                state.navBody.push({ type: 'pause', end: curMin + pause }); 
+                curMin += pause; 
+            }
         }
         document.getElementById('startBtn').style.display = "block";
         renderList('preview-list');
     }
 
     async function startDrive() {
-        let nameInput = prompt("Potvrď své IC Jméno:", state.icName || "");
-        if(!nameInput) return;
-        state.icName = nameInput; localStorage.setItem('icName', nameInput);
+        state.icName = prompt("Zadej své jméno:", state.icName || "Elizabeth Brown");
+        if(!state.icName) return;
+        localStorage.setItem('prevTotal', document.getElementById('prevTotal').value);
         switchMode('drive-mode');
-
-        // LOGOVÁNÍ STARTU
+        
         fetch(WEBHOOK_LOG, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({
-            username: "Výpravčí", embeds: [{ title: "🚂 START SMĚNY", description: `**Strojvůdce:** ${state.icName}\n**Trasa:** ${state.routeName}`, color: 3066993 }]
+            username: "CRC Dispečink", embeds: [{ title: "🚂 START SMĚNY", description: `**Strojvůdce:** ${state.icName}\n**Trasa:** ${state.routeName}`, color: 3066993 }]
         })});
 
-        // BLACKWATER DISPATCH LOGIKA
-        const datumStr = `${new Date().getDate()}.${new Date().getMonth() + 1}.1899`;
-        state.navBody.forEach(item => {
-            if (item.type === 'station' && item.name.toLowerCase().includes('blackwater')) {
-                let smer = "";
-                if (state.routeName.includes("ZÁPADNÍ")) { smer = "Saint Denis"; }
-                else if (state.routeName.includes("JIŽNÍ")) { smer = (item.stationIndex > 8) ? "Saint Denis" : "Benedict Point"; }
-                
-                if(smer !== "") {
-                    fetch(WEBHOOK_BW, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({
-                        content: `${datumStr} ${state.routeName} - směr ${smer} příjezd ${formatTime(item.start)}`
-                    })});
-                }
-            }
-        });
-
-        // ODESLÁNÍ JÍZDNÍCH ŘÁDŮ
-        for(let lap of state.smenaData) {
-            await new Promise(r => setTimeout(r, 600));
-            fetch(WEBHOOK_RAD, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({
-                username: "Jízdní Řád", embeds: [{ title: lap.title + " | " + state.icName, description: lap.desc, color: 3447003 }]
-            })});
-        }
-        runNavigator(); renderList('active-list');
+        runNavigator(); 
+        renderList('active-list');
     }
 
     function runNavigator() {
         state.interval = setInterval(() => {
             const active = state.navBody[state.currentIndex];
             if (!active) { finishSměna(); return; }
-            const nowMin = new Date().getHours() * 60 + new Date().getMinutes() + (new Date().getSeconds() / 60);
-            let remains = Math.round(((active.end + state.delay) - nowMin) * 60);
+            
+            const now = new Date();
+            const nowMin = now.getHours() * 60 + now.getMinutes() + (now.getSeconds() / 60);
+            let remains = Math.round((active.end - nowMin) * 60);
+            
+            // UI Update
             document.getElementById('nav-timer-container').innerText = remains < 0 ? "0:00" : `${Math.floor(remains/60)}:${(remains%60).toString().padStart(2,'0')}`;
-            document.getElementById('hud-planned-time').innerText = formatTime(active.end + state.delay);
+            document.getElementById('nav-timer-container').style.color = remains < 0 ? "var(--danger)" : "white";
+            document.getElementById('hud-planned-time').innerText = formatTime(active.end);
+            document.getElementById('hud-lap').innerText = active.lap || "-";
+            
             document.getElementById('nav-main').innerText = active.type === 'station' ? `📍 ${active.name}` : (active.type === 'pause' ? "☕ PAUZA SD" : `${active.from} ➔ ${active.to}`);
             document.getElementById('navigator').className = active.type === 'station' ? "state-station" : "state-travel";
-            const progress = Math.round((state.currentIndex / state.navBody.length) * 100);
+            
+            const progress = (state.currentIndex / state.navBody.length) * 100;
             document.getElementById('gvd-fill').style.width = progress + "%";
-            document.getElementById('hud-remaining').innerText = state.navBody.slice(state.currentIndex).filter(b => b.type === 'station').length;
+            
+            // HUD Zpoždění
+            let delay = Math.round(nowMin - active.end);
+            let dEl = document.getElementById('hud-delay');
+            if(delay > 0) { dEl.innerText = `+${delay} MIN`; dEl.style.color = "var(--danger)"; }
+            else { dEl.innerText = "VČAS"; dEl.style.color = "var(--success)"; }
         }, 1000);
     }
 
     function handleAction() {
         const active = state.navBody[state.currentIndex];
         if (active.type === 'travel') {
-            let t = prompt("Počet prodaných jízdenek:", "0");
+            let t = prompt("Počet jízdenek:", "0");
             state.tickets += (parseInt(t) || 0);
             document.getElementById('hud-cash').innerText = `${state.tickets * 5} $`;
         }
-        const nowMin = new Date().getHours() * 60 + new Date().getMinutes() + (new Date().getSeconds() / 60);
-        state.delay += (nowMin - (active.end + state.delay));
-        state.currentIndex++; renderList('active-list');
+        state.currentIndex++; 
+        renderList('active-list');
     }
 
-    async function finishSměna() {
+    function finishSměna() {
         clearInterval(state.interval); switchMode('report-mode');
-        const lapsNow = parseInt(document.getElementById('lapCount').value);
-        const totalAfter = (parseInt(localStorage.getItem('prevTotal')) || 0) + lapsNow;
-        localStorage.setItem('prevTotal', totalAfter);
-        
-        document.getElementById('final-stats').innerHTML = `<b>👤 Strojvůdce:</b> ${state.icName}<br><b>📈 Kola:</b> ${lapsNow} (Celkem: ${totalAfter})<br><b>🎫 Jízdenky:</b> ${state.tickets} ks ($ ${state.tickets * 5})`;
-        
-        // OPRAVENÁ ZPRÁVA NA DISCORD
-        fetch(WEBHOOK_LOG, { 
-            method: 'POST', 
-            headers: {'Content-Type': 'application/json'}, 
-            body: JSON.stringify({
-                username: "Výkaz", 
-                embeds: [{ 
-                    title: "🏁 SMĚNA DOKONČENA", 
-                    description: `**Strojvůdce:** ${state.icName}\n**Dnes odjeto:** ${lapsNow} kol\n**Historie celkem:** ${totalAfter} kol\n**Prodané jízdenky:** ${state.tickets} ks\n**Tržba:** ${state.tickets * 5} $`, 
-                    color: 15844367 
-                }]
-            })
-        });
+        const laps = parseInt(document.getElementById('lapCount').value);
+        const total = (parseInt(localStorage.getItem('prevTotal')) || 0) + laps;
+        document.getElementById('final-stats').innerHTML = `<b>👤 Strojvůdce:</b> ${state.icName}<br><b>📈 Kola:</b> ${laps} (Celkem: ${total})<br><b>🎫 Jízdenky:</b> ${state.tickets} ($ ${state.tickets * 5})`;
     }
 
-    function resetApp() { location.reload(); }
     function switchMode(id) {
         document.querySelectorAll('#setup-mode, #drive-mode, #report-mode').forEach(m => m.classList.remove('active-mode'));
         document.getElementById(id).classList.add('active-mode');
     }
+
     function renderList(targetId) {
         const list = document.getElementById(targetId); list.innerHTML = "";
         state.navBody.forEach((b, i) => {
             if (b.type === 'station') {
                 const row = document.createElement('div');
                 row.className = `item-row ${i === state.currentIndex ? 'active-row' : ''}`;
-                row.innerHTML = `<span>${b.name}</span><b>${formatTime(b.end + state.delay)}</b>`;
+                row.innerHTML = `<span>${b.name} ${b.cargo ? `<span class="tag">${b.cargo}</span>`:''}</span><b>${formatTime(b.end)}</b>`;
                 list.appendChild(row);
             }
         });
     }
+
     function formatTime(m) { return `${Math.floor(m/60)%24}:${(Math.floor(m%60)).toString().padStart(2,'0')}`; }
 </script>
 </body>
